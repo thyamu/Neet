@@ -1,0 +1,940 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neet.boolean.logicnetwork &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>neet.boolean.logicnetwork</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for neet.boolean.logicnetwork</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. currentmodule:: neet.boolean.logicnetwork</span>
+
+<span class="sd">.. testsetup:: logicnetwork</span>
+
+<span class="sd">    from neet.boolean.logicnetwork import LogicNetwork</span>
+
+<span class="sd">Logic-based Networks</span>
+<span class="sd">====================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">neet.python</span> <span class="k">import</span> <span class="n">long</span>
+<span class="kn">from</span> <span class="nn">neet.statespace</span> <span class="k">import</span> <span class="n">StateSpace</span>
+<span class="kn">from</span> <span class="nn">neet.exceptions</span> <span class="k">import</span> <span class="n">FormatError</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+
+<div class="viewcode-block" id="LogicNetwork"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork">[docs]</a><span class="k">class</span> <span class="nc">LogicNetwork</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The LogicNetwork class represents boolean networks whose update rules</span>
+<span class="sd">    follow logic relations among nodes. Each node state is expressed as ``0``</span>
+<span class="sd">    or ``1``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LogicNetwork.__init__"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduced</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a network from a logic truth table.</span>
+
+<span class="sd">        A truth table stores a list of tuples, one for each node in order. A</span>
+<span class="sd">        tuple of the form `(A, {C1, C2, ...})` at index `i` provides the</span>
+<span class="sd">        activation conditions for the node of index `i`. `A` is a tuple marking</span>
+<span class="sd">        the indices of the nodes which influence the state of node `i` via</span>
+<span class="sd">        logic relations. `{C1, C2, ...}` is a set, each element of which is the</span>
+<span class="sd">        collection of binary states of these influencing nodes that would</span>
+<span class="sd">        activate node `i`, setting it to `1`. Any other collection of states of</span>
+<span class="sd">        nodes in `A` are assumed to deactivate node `i`, setting it to `0`.</span>
+
+<span class="sd">        `C1`, `C2`, etc. are sequences (`tuple` or `str`) of binary digits,</span>
+<span class="sd">        each being the binary state of corresponding node in `A`.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((0,), {&#39;0&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; net.table</span>
+<span class="sd">            [((0,), {&#39;0&#39;})]</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1,), {&#39;0&#39;, &#39;1&#39;}), ((0,), {&#39;1&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            2</span>
+<span class="sd">            &gt;&gt;&gt; net.table == [((1,), {&#39;0&#39;, &#39;1&#39;}), ((0,), {&#39;1&#39;})]</span>
+<span class="sd">            True</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;01&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0, 2), ((0, 1), &#39;10&#39;, [1, 1])),</span>
+<span class="sd">            ... ((0, 1), {&#39;11&#39;})], [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            3</span>
+<span class="sd">            &gt;&gt;&gt; net.names</span>
+<span class="sd">            [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; net.table == [((1, 2), {&#39;01&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0, 2), {&#39;01&#39;, &#39;11&#39;, &#39;10&#39;}), ((0, 1), {&#39;11&#39;})]</span>
+<span class="sd">            True</span>
+
+<span class="sd">        :param table: the logic table</span>
+<span class="sd">        :param names: names of nodes, default None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;table must be a list or tuple&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;names must be a list or tuple&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;number of names must match network size&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="c1"># Store positive truth table for human reader.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
+            <span class="c1"># Validate incoming indices.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid table format&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;mask index out of range&quot;</span><span class="p">)</span>
+            <span class="c1"># Validate truth table of the sub net.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid table format&quot;</span><span class="p">)</span>
+            <span class="n">conditions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">conditions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">long</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">conditions</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">reduced</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reduce_table</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_space</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__size</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Encode truth table for faster computation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encode_table</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The number of nodes in the network.</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;01&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0, 2), {&#39;01&#39;, &#39;10&#39;, &#39;11&#39;}), ((0, 1), {&#39;11&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            3</span>
+
+<span class="sd">        :type: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span>
+
+    <span class="k">def</span> <span class="nf">_encode_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encoded_table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">indices</span><span class="p">,</span> <span class="n">conditions</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="c1"># Encode the mask.</span>
+            <span class="n">mask_code</span> <span class="o">=</span> <span class="n">long</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                <span class="n">mask_code</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">long</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>  <span class="c1"># Low order, low index.</span>
+            <span class="c1"># Encode each condition of truth table.</span>
+            <span class="n">encoded_sub_table</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">:</span>
+                <span class="n">encoded_condition</span> <span class="o">=</span> <span class="n">long</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+                    <span class="n">encoded_condition</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">long</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="n">encoded_sub_table</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">encoded_condition</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_encoded_table</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mask_code</span><span class="p">,</span> <span class="n">encoded_sub_table</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">is_dependent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return True if state of ``target`` is influenced by the state of</span>
+<span class="sd">        ``source``.</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;01&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0, 2), {&#39;01&#39;, &#39;10&#39;, &#39;11&#39;}), ((0, 1), {&#39;11&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.is_dependent(0, 0)</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; net.is_dependent(0, 2)</span>
+<span class="sd">            True</span>
+
+<span class="sd">        :param target: index of the target node</span>
+<span class="sd">        :param source: index of the source node</span>
+<span class="sd">        :returns: whether the target node is dependent on the source</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sub_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sub_table</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c1"># No explicit dependency.</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Determine implicit dependency.</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">sub_table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">sub_table</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="c1"># State excluding source.</span>
+            <span class="n">state_sans_source</span> <span class="o">=</span> <span class="n">state</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">long</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">counter</span><span class="p">[</span><span class="n">state_sans_source</span><span class="p">]</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">state_sans_source</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">counter</span><span class="p">[</span><span class="n">state_sans_source</span><span class="p">]</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">state_sans_source</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>  <span class="c1"># States uneven.</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="LogicNetwork.reduce_table"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.reduce_table">[docs]</a>    <span class="k">def</span> <span class="nf">reduce_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reduce truth table by removing input nodes which have no logic</span>
+<span class="sd">        influence from the truth table of each node.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This function introduces the identity function for all nodes which</span>
+<span class="sd">            have no inputs. This ensure that every node has a well-defined</span>
+<span class="sd">            logical function. The example below demonstrates this with node</span>
+<span class="sd">            ``1``.</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((0,1), {&#39;00&#39;, &#39;10&#39;}), ((0,), {&#39;0&#39;, &#39;1&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.table == [((0,1), {&#39;00&#39;, &#39;10&#39;}), ((0,), {&#39;0&#39;, &#39;1&#39;})]</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; net.reduce_table()</span>
+<span class="sd">            &gt;&gt;&gt; net.table == [((1,), {&#39;0&#39;}), ((1,), {&#39;1&#39;})]</span>
+<span class="sd">            True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reduced_table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">):</span>
+            <span class="n">reduced_sources</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">reduced_indices</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dependent</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+                    <span class="n">reduced_sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                    <span class="n">reduced_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">reduced_sources</span><span class="p">:</span>  <span class="c1"># Node state is influenced by other nodes.</span>
+                <span class="n">reduced_conditions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">:</span>
+                    <span class="n">reduced_condition</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">condition</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                                                 <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">reduced_indices</span><span class="p">])</span>
+                    <span class="n">reduced_conditions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">reduced_condition</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Node state is not influenced by other nodes including itself.</span>
+                <span class="n">reduced_sources</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">conditions</span><span class="p">:</span>
+                    <span class="c1"># If original conditions is empty, node is never activated.</span>
+                    <span class="n">reduced_conditions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+                    <span class="c1"># Node is always activated no matter its previous state.</span>
+                    <span class="n">reduced_conditions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Node state is not changed.</span>
+                    <span class="n">reduced_conditions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">}</span>
+
+            <span class="n">reduced_table</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">tuple</span><span class="p">(</span><span class="n">reduced_sources</span><span class="p">),</span> <span class="n">reduced_conditions</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">reduced_table</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encode_table</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.state_space"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.state_space">[docs]</a>    <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a :class:`neet.statespace.StateSpace` object for the network.</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;01&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0, 2), {&#39;01&#39;, &#39;10&#39;, &#39;11&#39;}), ((0, 1), {&#39;11&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.state_space()</span>
+<span class="sd">            &lt;neet.statespace.StateSpace object at 0x...&gt;</span>
+<span class="sd">            &gt;&gt;&gt; space = net.state_space()</span>
+<span class="sd">            &gt;&gt;&gt; list(space)</span>
+<span class="sd">            [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+
+<span class="sd">        :returns: the network&#39;s :class:`neet.statespace.StateSpace`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_space</span></div>
+
+    <span class="k">def</span> <span class="nf">_unsafe_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net_state</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unsafely update node states according to the truth table.</span>
+
+<span class="sd">        If ``index`` is provided, only update the node at ``index``. If</span>
+<span class="sd">        ``index`` is not provided, update all nodes. The input ``net_state`` is</span>
+<span class="sd">        not modified.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((0,), {&#39;0&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0], 0)</span>
+<span class="sd">            [1]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([1])</span>
+<span class="sd">            [0]</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1,), {&#39;0&#39;, &#39;1&#39;}), ((0,), {&#39;1&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([1, 0], 0))</span>
+<span class="sd">            [1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([1, 0], 1))</span>
+<span class="sd">            [1, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 0])</span>
+<span class="sd">            [1, 0]</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;01&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0, 2), {(0, 1), &#39;10&#39;, (1, 1)}),</span>
+<span class="sd">            ... ((0, 1), {&#39;11&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            3</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 1, 0])</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 0, 1])</span>
+<span class="sd">            [1, 1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 0, 1], 1)</span>
+<span class="sd">            [0, 1, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 0, 1], pin=[1])</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 0, 1], pin=[0, 1])</span>
+<span class="sd">            [0, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 0, 1], values={0: 0})</span>
+<span class="sd">            [0, 1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0, 0, 1], pin=[1], values={0: 0})</span>
+<span class="sd">            [0, 0, 0]</span>
+
+<span class="sd">        :param net_state: a sequence of binary node states</span>
+<span class="sd">        :type net_state: sequence</span>
+<span class="sd">        :param index: the index to update (or None)</span>
+<span class="sd">        :type index: int or None</span>
+<span class="sd">        :param pin: the indices to pin (or None)</span>
+<span class="sd">        :type pin: sequence</span>
+<span class="sd">        :param values: override values</span>
+<span class="sd">        :type values: dict</span>
+<span class="sd">        :returns: the updated states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">encoded_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="p">()</span><span class="o">.</span><span class="n">_unsafe_encode</span><span class="p">(</span><span class="n">net_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">pin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pin</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">pin</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">mask</span><span class="p">,</span> <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encoded_table</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">sub_net_state</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">encoded_state</span>
+            <span class="n">net_state</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">sub_net_state</span> <span class="ow">in</span> <span class="n">condition</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">net_state</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">return</span> <span class="n">net_state</span>
+
+<div class="viewcode-block" id="LogicNetwork.update"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net_state</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update node states according to the truth table.</span>
+
+<span class="sd">        If ``index`` is provided, only update the node at ``index``. If</span>
+<span class="sd">        ``index`` is not provided, update all ndoes. ``pin`` provides the</span>
+<span class="sd">        indices of which the nodes&#39; states are forced to remain unchanged.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((0,), {&#39;0&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0], 0)</span>
+<span class="sd">            [1]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([1])</span>
+<span class="sd">            [0]</span>
+<span class="sd">            &gt;&gt;&gt;</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1,), {&#39;0&#39;, &#39;1&#39;}), ((0,), {&#39;1&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.update([1, 0], 0)</span>
+<span class="sd">            [1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([1, 0], 1)</span>
+<span class="sd">            [1, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 0])</span>
+<span class="sd">            [1, 0]</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;01&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0, 2), {(0, 1), &#39;10&#39;, (1, 1)}),</span>
+<span class="sd">            ... ((0, 1), {&#39;11&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            3</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 0, 1], 1)</span>
+<span class="sd">            [0, 1, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 1, 0])</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 0, 1])</span>
+<span class="sd">            [1, 1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 0, 1], pin=[1])</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 0, 1], pin=[0, 1])</span>
+<span class="sd">            [0, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 0, 1], values={0: 0})</span>
+<span class="sd">            [0, 1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0, 0, 1], pin=[1], values={0: 0})</span>
+<span class="sd">            [0, 0, 0]</span>
+
+<span class="sd">        :param net_state: a sequence of binary node states</span>
+<span class="sd">        :type net_state: sequence</span>
+<span class="sd">        :param index: the index to update (or None)</span>
+<span class="sd">        :type index: int or None</span>
+<span class="sd">        :param pin: the indices to pin (or None)</span>
+<span class="sd">        :type pin: sequence</span>
+<span class="sd">        :param values: override values</span>
+<span class="sd">        :type values: dict</span>
+<span class="sd">        :returns: the updated states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">net_state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;the provided state is not in the network&#39;s state space&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid state in values argument&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pin</span> <span class="ow">and</span> <span class="n">values</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="n">pin</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot set a value for a pinned state&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unsafe_update</span><span class="p">(</span><span class="n">net_state</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.read_table"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.read_table">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_table</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table_path</span><span class="p">,</span> <span class="n">reduced</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a network from a truth table file.</span>
+
+<span class="sd">        A logic table file starts with a table title which contains names of</span>
+<span class="sd">        all nodes. It is a line marked by ``##`` at the begining with node</span>
+<span class="sd">        names seperated by commas or spaces. This line is required. For</span>
+<span class="sd">        artificial network without node names, arbitrary names must be put in</span>
+<span class="sd">        place, e.g.:</span>
+
+<span class="sd">        ``## A B C D``</span>
+
+<span class="sd">        Following are the sub-tables of logic conditions for every node. Each</span>
+<span class="sd">        sub-table nominates a node and its logically connected nodes in par-</span>
+<span class="sd">        enthesis as a comment line:</span>
+
+<span class="sd">        ``# A (B C)``</span>
+
+<span class="sd">        The rest of the sub-table are states of those nodes in parenthesis</span>
+<span class="sd">        ``(B, C)`` that would activate the state of A. States that would</span>
+<span class="sd">        deactivate ``A`` should not be included in the sub-table.</span>
+
+<span class="sd">        A complete logic table with 3 nodes A, B, C would look like this:</span>
+
+<span class="sd">        ::</span>
+
+<span class="sd">            ## A B C</span>
+<span class="sd">            # A (B C)</span>
+<span class="sd">            1 0</span>
+<span class="sd">            1 1</span>
+<span class="sd">            # B (A)</span>
+<span class="sd">            1</span>
+<span class="sd">            # C (B C A)</span>
+<span class="sd">            1 0 1</span>
+<span class="sd">            0 1 0</span>
+<span class="sd">            0 1 1</span>
+
+<span class="sd">        Custom comments can be added above or below the table title (as long as</span>
+<span class="sd">        they are preceeded with more or less than two ``#`` (eg ``#`` or</span>
+<span class="sd">        ``###`` but not ``##``)).</span>
+
+<span class="sd">        .. rubric:: Examples:</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; myeloid_path = &#39;../neet/boolean/data/myeloid-truth_table.txt&#39;</span>
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork.read_table(myeloid_path)</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            11</span>
+<span class="sd">            &gt;&gt;&gt; net.names</span>
+<span class="sd">            [&#39;GATA-2&#39;, &#39;GATA-1&#39;, &#39;FOG-1&#39;, &#39;EKLF&#39;, &#39;Fli-1&#39;, &#39;SCL&#39;, &#39;C/EBPa&#39;, &#39;PU.1&#39;, &#39;cJun&#39;, &#39;EgrNab&#39;, &#39;Gfi-1&#39;]</span>
+
+<span class="sd">        :param table_path: a path to a table table file</span>
+<span class="sd">        :type table_path: str</span>
+<span class="sd">        :returns: a :class:`LogicNetwork`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names_format</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^\s*##[^#]+$&#39;</span><span class="p">)</span>
+        <span class="n">node_title_format</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s1">&#39;^\s*#\s*(\S+)\s*\((\s*(\S+\s*)+)\)\s*$&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="c1"># Search for node names.</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">names</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">names_format</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                        <span class="n">names</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s*,\s*|\s+&#39;</span><span class="p">,</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">FormatError</span><span class="p">(</span><span class="s2">&quot;node names not found in file&quot;</span><span class="p">)</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="p">[()]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+            <span class="c1"># Create condition tables for each node.</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">:]:</span>
+                <span class="n">node_title</span> <span class="o">=</span> <span class="n">node_title_format</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">node_title</span><span class="p">:</span>
+                    <span class="n">node_name</span> <span class="o">=</span> <span class="n">node_title</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="c1"># Read specifications for node.</span>
+                    <span class="k">if</span> <span class="n">node_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">FormatError</span><span class="p">(</span>
+                            <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; not in node names&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_name</span><span class="p">))</span>
+                    <span class="n">node_index</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">node_name</span><span class="p">)</span>
+                    <span class="n">sub_net_nodes</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                        <span class="sa">r</span><span class="s1">&#39;\s*,\s*|\s+&#39;</span><span class="p">,</span> <span class="n">node_title</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+                    <span class="n">in_nodes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">sub_net_nodes</span><span class="p">))</span>
+                    <span class="n">table</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_nodes</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^\s*#.*$&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+                    <span class="c1"># Skip a comment.</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Read activation conditions for node.</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                            <span class="n">condition</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s*,\s*|\s+&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># Skip an empty line.</span>
+                            <span class="k">continue</span>
+
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">node_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+                            <span class="k">raise</span> <span class="n">FormatError</span><span class="p">(</span>
+                                <span class="s2">&quot;number of states and nodes must match&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">):</span>
+                                <span class="k">raise</span> <span class="n">FormatError</span><span class="p">(</span><span class="s2">&quot;node state must be binary&quot;</span><span class="p">)</span>
+                        <span class="n">table</span><span class="p">[</span><span class="n">node_index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span>
+
+                    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>  <span class="c1"># node_index not defined</span>
+                        <span class="k">raise</span> <span class="n">FormatError</span><span class="p">(</span>
+                            <span class="s2">&quot;node must be specified before logic conditions&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If no truth table is provided for a node, that node is considered</span>
+        <span class="c1"># an &quot;external&quot; node, i.e, its state stays on or off by itself.</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sub_table</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">sub_table</span><span class="p">:</span>  <span class="c1"># Empty truth table.</span>
+                <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">i</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">reduced</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.read_logic"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.read_logic">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_logic</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">logic_path</span><span class="p">,</span> <span class="n">external_nodes_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduced</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a network from a file of logic equations.</span>
+
+<span class="sd">        A logic equations has the form of ``A = B AND ( C OR D )``, each term</span>
+<span class="sd">        being separated from parantheses and logic operators with at least a</span>
+<span class="sd">        space. The optional ``external_nodes_path`` takes a file that contains</span>
+<span class="sd">        nodes in a column whose states do not depend on any nodes. These are</span>
+<span class="sd">        considered &quot;external&quot; nodes. Equivalently, such a node would have a</span>
+<span class="sd">        logic equation ``A = A``, for its state stays on or off unless being</span>
+<span class="sd">        set externally, but now the node had to be excluded from</span>
+<span class="sd">        ``external_nodes_path`` to avoid duplication and confusion.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; myeloid_path = &#39;../neet/boolean/data/myeloid-logic_expressions.txt&#39;</span>
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork.read_logic(myeloid_path)</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            11</span>
+<span class="sd">            &gt;&gt;&gt; net.names</span>
+<span class="sd">            [&#39;GATA-2&#39;, &#39;GATA-1&#39;, &#39;FOG-1&#39;, &#39;EKLF&#39;, &#39;Fli-1&#39;, &#39;SCL&#39;, &#39;C/EBPa&#39;, &#39;PU.1&#39;, &#39;cJun&#39;, &#39;EgrNab&#39;, &#39;Gfi-1&#39;]</span>
+
+<span class="sd">        :param logic_path: path to a file of logial expressions</span>
+<span class="sd">        :type logic_path: str</span>
+<span class="sd">        :param external_nodes_path: a path to a file of external nodes</span>
+<span class="sd">        :type external_nodes_path: str</span>
+<span class="sd">        :returns: a :class:`LogicNetwork`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">expressions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">logic_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">eq_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">eq_file</span><span class="p">:</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">expr</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="n">expressions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">external_nodes_path</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">external_nodes_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">extra_file</span><span class="p">:</span>
+                <span class="n">extras</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">extra_file</span><span class="p">]</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="n">extras</span>
+
+        <span class="n">ops</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;AND&#39;</span><span class="p">,</span> <span class="s1">&#39;OR&#39;</span><span class="p">,</span> <span class="s1">&#39;NOT&#39;</span><span class="p">}</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">expressions</span><span class="p">:</span>
+            <span class="n">sub_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">conditions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+            <span class="n">expr_split</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">expr_split</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ops</span> <span class="ow">and</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s1">&#39;()&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unknown component &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sub_nodes</span><span class="p">:</span>
+                        <span class="n">expr_split</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sub_nodes</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+                        <span class="n">sub_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">expr_split</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sub_nodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">expr_split</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">logic_expr</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expr_split</span><span class="p">)</span>
+
+            <span class="n">indices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sub_nodes</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">dec_state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="nb">len</span><span class="p">(</span><span class="n">sub_nodes</span><span class="p">)):</span>
+                <span class="n">bin_state</span> <span class="o">=</span> <span class="s1">&#39;{0:0</span><span class="si">{1}</span><span class="s1">b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dec_state</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_nodes</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">eval</span><span class="p">(</span><span class="n">logic_expr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">bin_state</span><span class="p">)):</span>
+                    <span class="n">conditions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bin_state</span><span class="p">)</span>
+
+            <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">indices</span><span class="p">,</span> <span class="n">conditions</span><span class="p">))</span>
+
+        <span class="c1"># Add empty logic tables for external components.</span>
+        <span class="k">if</span> <span class="n">external_nodes_path</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extras</span><span class="p">)):</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">((((</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="p">),),</span> <span class="nb">set</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">reduced</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.neighbors_in"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.neighbors_in">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the set of all neighbor nodes, where edge(neighbor_node--&gt;index)</span>
+<span class="sd">        exists.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;11&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0,), {&#39;1&#39;}),</span>
+<span class="sd">            ... ((0, 1, 2), {&#39;010&#39;, &#39;011&#39;, &#39;101&#39;}),</span>
+<span class="sd">            ... ((3,), {&#39;1&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors_in(node) for node in range(net.size)]</span>
+<span class="sd">            [{1, 2}, {0}, {0, 1, 2}, {3}]</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :returns: the set of all node indices which point toward the index node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.neighbors_out"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.neighbors_out">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the set of all neighbor nodes, where edge(index--&gt;neighbor_node)</span>
+<span class="sd">        exists.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;11&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0,), {&#39;1&#39;}),</span>
+<span class="sd">            ... ((0, 1, 2), {&#39;010&#39;, &#39;011&#39;, &#39;101&#39;}),</span>
+<span class="sd">            ... ((3,), {&#39;1&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors_out(node) for node in range(net.size)]</span>
+<span class="sd">            [{1, 2}, {0, 2}, {0, 2}, {3}]</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :returns: the set of all node indices which the index node points to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">outgoing_neighbors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">incoming_neighbors</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">incoming_neighbors</span><span class="p">:</span>
+                <span class="n">outgoing_neighbors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">outgoing_neighbors</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.neighbors"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.neighbors">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a set of neighbors for a specified node, or a list of sets of</span>
+<span class="sd">        neighbors for all nodes in the network.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: logicnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = LogicNetwork([((1, 2), {&#39;11&#39;, &#39;10&#39;}),</span>
+<span class="sd">            ... ((0,), {&#39;1&#39;}),</span>
+<span class="sd">            ... ((0, 1, 2), {&#39;010&#39;, &#39;011&#39;, &#39;101&#39;}),</span>
+<span class="sd">            ... ((3,), {&#39;1&#39;})])</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors(node) for node in range(net.size)]</span>
+<span class="sd">            [{1, 2}, {0, 2}, {0, 1, 2}, {3}]</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :returns: a set of neighbors of a node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.to_networkx_graph"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.to_networkx_graph">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;indices&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return networkx graph given neet network.</span>
+
+<span class="sd">        :param labels: how node is labeled and thus identified in networkx</span>
+<span class="sd">                       graph (``&#39;names&#39;`` or ``&#39;indices&#39;``)</span>
+<span class="sd">        :returns: a ``networkx.DiGraph``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">labels</span> <span class="o">==</span> <span class="s1">&#39;names&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;network nodes do not have names&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">labels</span> <span class="o">==</span> <span class="s1">&#39;indices&#39;</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__size</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;labels must be &#39;names&#39; or &#39;indices&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+                <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LogicNetwork.draw"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.LogicNetwork.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;indices&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Output a file with a simple network drawing.</span>
+
+<span class="sd">        Requires ``networkx`` and ``pygraphviz``.</span>
+
+<span class="sd">        Supported image formats are determined by ``graphviz``. In particular,</span>
+<span class="sd">        pdf support requires ``&#39;cairo&#39;`` and ``&#39;pango&#39;`` to be installed prior</span>
+<span class="sd">        to graphviz installation.</span>
+
+<span class="sd">        :param labels: how node is labeled and thus identified in networkx</span>
+<span class="sd">                       graph (``&#39;names&#39;`` or ``&#39;indices&#39;``), only used if</span>
+<span class="sd">                       network is a :class:`LogicNetwork` or</span>
+<span class="sd">                       :class:`neet.boolean.WTNetwork`</span>
+<span class="sd">        :param filename: filename to write drawing to. Temporary filename will</span>
+<span class="sd">                         be used if no filename provided.</span>
+<span class="sd">        :returns: a ``pygraphviz`` network drawing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">nx_agraph</span><span class="o">.</span><span class="n">view_pygraphviz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_networkx_graph</span><span class="p">(</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">),</span> <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;circo&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

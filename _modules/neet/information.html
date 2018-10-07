@@ -1,0 +1,796 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neet.information &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>neet.information</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for neet.information</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. currentmodule:: neet.information</span>
+
+<span class="sd">.. testsetup:: information</span>
+
+<span class="sd">    import numpy as np</span>
+<span class="sd">    from neet.information import *</span>
+<span class="sd">    from neet.boolean.examples import s_pombe</span>
+
+<span class="sd">Information Architecture</span>
+<span class="sd">========================</span>
+
+<span class="sd">The :mod:`neet.information` provides a collection of functions which compute</span>
+<span class="sd">various information measures over the dynamics of discrete-state network</span>
+<span class="sd">models. Each measure computes a time series of a desired length from each</span>
+<span class="sd">initial state of the network and uses the time series to populate probability</span>
+<span class="sd">distributions over the state transitions of each node. From there any number</span>
+<span class="sd">of information or entropy measures may be applied. All of this is bookkeeping</span>
+<span class="sd">is taken care of by the function; all you have to do is provide a network and</span>
+<span class="sd">any necessary parameters for the calculation</span>
+
+
+<span class="sd">.. rubric:: Example (Active Information for Fission Yeast)</span>
+
+<span class="sd">.. doctest:: information</span>
+
+<span class="sd">    &gt;&gt;&gt; active_information(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">    array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="sd">           0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+
+<span class="sd">The core information-theoretic computations are supported by the `PyInform</span>
+<span class="sd">&lt;https://elife-asu.github.io/PyInform&gt;`_ package.</span>
+
+
+<span class="sd">API Documentation</span>
+<span class="sd">-----------------</span>
+
+<span class="sd">The :mod:`neet.information` module is broken into two parts: `Information</span>
+<span class="sd">Measures`_ and the `Architecture Class`_.</span>
+
+<span class="sd">The `Information Measures`_ are a collection of module-level functions which</span>
+<span class="sd">independently compute a variety of information measures over a network of</span>
+<span class="sd">interest:</span>
+
+<span class="sd">- Active Information Storage (:func:`active_information`)</span>
+<span class="sd">- Entropy Rate (:func:`entropy_rate`)</span>
+<span class="sd">- Transfer Entropy (:func:`transfer_entropy`)</span>
+<span class="sd">- Mutual Information (:func:`mutual_information`).</span>
+
+<span class="sd">However, since they do not share any data between them, if you plan to compute</span>
+<span class="sd">many different measures, it is much more efficient to cache the computed time</span>
+<span class="sd">series. This is done by the :class:`Architecture` class which provides all of</span>
+<span class="sd">the same measures, only computes the time series once.</span>
+
+<span class="sd">Information Measures</span>
+<span class="sd">^^^^^^^^^^^^^^^^^^^^</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyinform</span> <span class="k">as</span> <span class="nn">pi</span>
+<span class="kn">from</span> <span class="nn">neet.synchronous</span> <span class="k">import</span> <span class="n">timeseries</span>
+
+
+<div class="viewcode-block" id="active_information"><a class="viewcode-back" href="../../information.html#neet.information.active_information">[docs]</a><span class="k">def</span> <span class="nf">active_information</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the active information storage for each node in a network.</span>
+
+<span class="sd">    .. doctest:: information</span>
+
+<span class="sd">        &gt;&gt;&gt; active_information(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">        array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="sd">               0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+<span class="sd">        &gt;&gt;&gt; lais = active_information(s_pombe, k=5, timesteps=20, local=True)</span>
+<span class="sd">        &gt;&gt;&gt; lais[1]</span>
+<span class="sd">        array([[0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                0.13079175],</span>
+<span class="sd">               [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                0.13079175],</span>
+<span class="sd">               [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                0.13079175],</span>
+<span class="sd">               ...,</span>
+<span class="sd">               [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                0.13079175],</span>
+<span class="sd">               [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                0.13079175],</span>
+<span class="sd">               [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                0.13079175]])</span>
+<span class="sd">        &gt;&gt;&gt; np.mean(lais[1])</span>
+<span class="sd">        0.4083435963963132</span>
+
+<span class="sd">    :param net: a NEET network</span>
+<span class="sd">    :param k: the history length</span>
+<span class="sd">    :param timesteps: the number of timesteps to evaluate the network</span>
+<span class="sd">    :param size: the size of variable-sized network (or ``None``)</span>
+<span class="sd">    :param local: whether or not to compute the local active information</span>
+<span class="sd">    :returns: a numpy array of active information values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">series</span> <span class="o">=</span> <span class="n">timeseries</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+        <span class="n">active_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">active_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">active_info</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="n">local</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">active_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">active_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">active_info</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="n">local</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">active_info</span></div>
+
+
+<div class="viewcode-block" id="entropy_rate"><a class="viewcode-back" href="../../information.html#neet.information.entropy_rate">[docs]</a><span class="k">def</span> <span class="nf">entropy_rate</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the entropy rate for each node in a network.</span>
+
+<span class="sd">    .. doctest:: information</span>
+
+<span class="sd">        &gt;&gt;&gt; entropy_rate(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">        array([0.        , 0.01691208, 0.07280268, 0.07280268, 0.05841994,</span>
+<span class="sd">               0.02479402, 0.03217332, 0.03217332, 0.08966941])</span>
+<span class="sd">        &gt;&gt;&gt; ler = entropy_rate(s_pombe, k=5, timesteps=20, local=True)</span>
+<span class="sd">        &gt;&gt;&gt; ler[4]</span>
+<span class="sd">        array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               ...,</span>
+<span class="sd">               [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099]])</span>
+<span class="sd">        &gt;&gt;&gt; np.mean(ler[4])</span>
+<span class="sd">        0.0584199434476326</span>
+
+<span class="sd">    :param net: a NEET network</span>
+<span class="sd">    :param k: the history length</span>
+<span class="sd">    :param timesteps: the number of timesteps to evaluate the network</span>
+<span class="sd">    :param size: the size of variable-sized network (or ``None``)</span>
+<span class="sd">    :param local: whether or not to compute the local entropy rate</span>
+<span class="sd">    :returns: a numpy array of entropy rate values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">series</span> <span class="o">=</span> <span class="n">timeseries</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">rate</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">entropy_rate</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="n">local</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">rate</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">entropy_rate</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="n">local</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rate</span></div>
+
+
+<div class="viewcode-block" id="transfer_entropy"><a class="viewcode-back" href="../../information.html#neet.information.transfer_entropy">[docs]</a><span class="k">def</span> <span class="nf">transfer_entropy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the transfer entropy matrix for a network.</span>
+
+<span class="sd">    .. doctest:: information</span>
+
+<span class="sd">        &gt;&gt;&gt; transfer_entropy(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">        array([[ 0.00000000e+00,  0.00000000e+00, -1.11022302e-16,</span>
+<span class="sd">                -1.11022302e-16,  0.00000000e+00,  0.00000000e+00,</span>
+<span class="sd">                -1.11022302e-16,  0.00000000e+00,  0.00000000e+00],</span>
+<span class="sd">               [-4.44089210e-16, -4.44089210e-16, -4.44089210e-16,</span>
+<span class="sd">                -4.44089210e-16,  1.69120759e-02, -4.44089210e-16,</span>
+<span class="sd">                -4.44089210e-16, -4.44089210e-16, -4.44089210e-16],</span>
+<span class="sd">               [ 4.44089210e-16,  5.13704599e-02,  4.44089210e-16,</span>
+<span class="sd">                 1.22248438e-02,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="sd">                 6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="sd">               [ 4.44089210e-16,  5.13704599e-02,  1.22248438e-02,</span>
+<span class="sd">                 4.44089210e-16,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="sd">                 6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="sd">               [ 0.00000000e+00,  5.84199434e-02,  4.76020591e-02,</span>
+<span class="sd">                 4.76020591e-02,  0.00000000e+00,  5.84199434e-02,</span>
+<span class="sd">                 4.76020591e-02,  4.76020591e-02,  0.00000000e+00],</span>
+<span class="sd">               [ 2.22044605e-16,  2.22044605e-16,  2.47940243e-02,</span>
+<span class="sd">                 2.47940243e-02,  2.22044605e-16,  2.22044605e-16,</span>
+<span class="sd">                 2.47940243e-02,  2.47940243e-02,  2.22044605e-16],</span>
+<span class="sd">               [-4.44089210e-16,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="sd">                 4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="sd">                -4.44089210e-16,  2.98276692e-03,  3.21733224e-02],</span>
+<span class="sd">               [-4.44089210e-16,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="sd">                 4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="sd">                 2.98276692e-03, -4.44089210e-16,  3.21733224e-02],</span>
+<span class="sd">               [-4.44089210e-16,  6.03036989e-02,  4.82889077e-02,</span>
+<span class="sd">                 4.82889077e-02,  8.96694146e-02,  6.03036989e-02,</span>
+<span class="sd">                 4.89270931e-02,  4.89270931e-02, -4.44089210e-16]])</span>
+
+<span class="sd">        &gt;&gt;&gt; lte = transfer_entropy(s_pombe, k=5, timesteps=20, local=True)</span>
+<span class="sd">        &gt;&gt;&gt; lte[4,3]</span>
+<span class="sd">        array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               ...,</span>
+<span class="sd">               [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099],</span>
+<span class="sd">               [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                0.00507099]])</span>
+<span class="sd">        &gt;&gt;&gt; np.mean(lte[4,3])</span>
+<span class="sd">        0.047602059103704124</span>
+
+<span class="sd">    :param net: a NEET network</span>
+<span class="sd">    :param k: the history length</span>
+<span class="sd">    :param timesteps: the number of timesteps to evaluate the network</span>
+<span class="sd">    :param size: the size of variable-sized network (or ``None``)</span>
+<span class="sd">    :param local: whether or not to compute the local transfer entropy</span>
+<span class="sd">    :returns: a numpy matrix of transfer entropy values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">series</span> <span class="o">=</span> <span class="n">timeseries</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+        <span class="n">trans_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">te</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">transfer_entropy</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">trans_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">te</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">trans_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">trans_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">transfer_entropy</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                                          <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">trans_entropy</span></div>
+
+
+<div class="viewcode-block" id="mutual_information"><a class="viewcode-back" href="../../information.html#neet.information.mutual_information">[docs]</a><span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the mutual information matrix for a network.</span>
+
+<span class="sd">    .. doctest:: information</span>
+
+<span class="sd">        &gt;&gt;&gt; mutual_information(s_pombe, timesteps=20)</span>
+<span class="sd">        array([[0.16232618, 0.01374672, 0.00428548, 0.00428548, 0.01340937,</span>
+<span class="sd">                0.01586238, 0.00516987, 0.00516987, 0.01102766],</span>
+<span class="sd">               [0.01374672, 0.56660996, 0.00745714, 0.00745714, 0.00639113,</span>
+<span class="sd">                0.32790848, 0.0067609 , 0.0067609 , 0.00468342],</span>
+<span class="sd">               [0.00428548, 0.00745714, 0.83837294, 0.475582  , 0.21157695,</span>
+<span class="sd">                0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="sd">               [0.00428548, 0.00745714, 0.475582  , 0.83837294, 0.21157695,</span>
+<span class="sd">                0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="sd">               [0.01340937, 0.00639113, 0.21157695, 0.21157695, 0.57459066,</span>
+<span class="sd">                0.00703145, 0.17560769, 0.17560769, 0.01233356],</span>
+<span class="sd">               [0.01586238, 0.32790848, 0.00432855, 0.00432855, 0.00703145,</span>
+<span class="sd">                0.51905053, 0.00621124, 0.00621124, 0.00260667],</span>
+<span class="sd">               [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="sd">                0.00621124, 0.80831657, 0.49349527, 0.10390475],</span>
+<span class="sd">               [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="sd">                0.00621124, 0.49349527, 0.80831657, 0.10390475],</span>
+<span class="sd">               [0.01102766, 0.00468342, 0.12755745, 0.12755745, 0.01233356,</span>
+<span class="sd">                0.00260667, 0.10390475, 0.10390475, 0.63423835]])</span>
+<span class="sd">        &gt;&gt;&gt; lmi = mutual_information(s_pombe, timesteps=20, local=True)</span>
+<span class="sd">        &gt;&gt;&gt; lmi[4,3]</span>
+<span class="sd">        array([[-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="sd">                 0.18484073,  0.18484073],</span>
+<span class="sd">               [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="sd">                 0.18484073,  0.18484073],</span>
+<span class="sd">               [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="sd">                 0.18484073,  0.18484073],</span>
+<span class="sd">               ...,</span>
+<span class="sd">               [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="sd">                 0.18484073,  0.18484073],</span>
+<span class="sd">               [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="sd">                 0.18484073,  0.18484073],</span>
+<span class="sd">               [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="sd">                 0.18484073,  0.18484073]])</span>
+<span class="sd">        &gt;&gt;&gt; np.mean(lmi[4,3])</span>
+<span class="sd">        0.21157695279993294</span>
+
+<span class="sd">    :param net: a NEET network</span>
+<span class="sd">    :param k: the history length</span>
+<span class="sd">    :param timesteps: the number of timesteps to evaluate the network</span>
+<span class="sd">    :param size: the size of variable-sized network (or ``None``)</span>
+<span class="sd">    :param local: whether or not to compute the local mutual information</span>
+<span class="sd">    :returns: a numpy matrix of mutual information values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">series</span> <span class="o">=</span> <span class="n">timeseries</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+        <span class="n">mutual_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">mutual_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">mutual_info</span><span class="p">(</span>
+                    <span class="n">series</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mutual_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">mutual_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">mutual_info</span><span class="p">(</span>
+                    <span class="n">series</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mutual_info</span></div>
+
+
+<div class="viewcode-block" id="Architecture"><a class="viewcode-back" href="../../information.html#neet.information.Architecture">[docs]</a><span class="k">class</span> <span class="nc">Architecture</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent the k-history informational architecture of a network.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The class:`Architecture` computes the average information measures a</span>
+<span class="sd">        bit differently than the associated module-level functions.</span>
+<span class="sd">        Specifically, it first computes the local measures and then averages</span>
+<span class="sd">        them; this leads different numerical results on account of the subtlties</span>
+<span class="sd">        of floating-point mathematics. However, they will always be &quot;close&quot;. In</span>
+<span class="sd">        particular</span>
+
+<span class="sd">        .. doctest:: information</span>
+
+<span class="sd">              &gt;&gt;&gt; arch = Architecture(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">              &gt;&gt;&gt; function = transfer_entropy(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">              &gt;&gt;&gt; method = arch.transfer_entropy()</span>
+<span class="sd">              &gt;&gt;&gt; np.testing.assert_almost_equal(method, function)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Architecture.__init__"><a class="viewcode-back" href="../../information.html#neet.information.Architecture.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the architecture given a network and enough information to</span>
+<span class="sd">        compute a time series.</span>
+
+<span class="sd">        During initialization the following measures are computed and cached:</span>
+<span class="sd">        * Local and Average Active Information Storage</span>
+<span class="sd">        * Local and Average Entropy Rate</span>
+<span class="sd">        * Local and Average Transfer Entropy</span>
+<span class="sd">        * Local and Average Mutual Information</span>
+
+<span class="sd">        .. doctest:: information</span>
+
+<span class="sd">            &gt;&gt;&gt; arch = Architecture(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">            &gt;&gt;&gt; arch.active_information()</span>
+<span class="sd">            array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="sd">                   0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+
+<span class="sd">        :param net: a NEET network</span>
+<span class="sd">        :param k: the history length</span>
+<span class="sd">        :param timesteps: the number of timesteps to evaluate the network</span>
+<span class="sd">        :param size: the size of variable-sized network (or ``None``)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__series</span> <span class="o">=</span> <span class="n">timeseries</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="n">timesteps</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__series</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_active_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">k</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_entropy_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">k</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_transfer_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">k</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_mutual_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__active_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__entropy_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__transfer_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__mutual_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__initialize</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">__initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the internal variables storing the computed information</span>
+<span class="sd">        measures.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__k</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__series</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__series</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">local_active_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_active_info</span>
+        <span class="n">active_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__active_info</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+            <span class="n">local_active_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">active_info</span><span class="p">(</span>
+                <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">active_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">local_active_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+
+        <span class="n">local_entropy_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_entropy_rate</span>
+        <span class="n">ent_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__entropy_rate</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+            <span class="n">local_entropy_rate</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">entropy_rate</span><span class="p">(</span>
+                <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">ent_rate</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">local_entropy_rate</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+
+        <span class="n">local_transfer_entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_transfer_entropy</span>
+        <span class="n">trans_entropy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__transfer_entropy</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+                <span class="n">te</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">transfer_entropy</span><span class="p">(</span><span class="n">series</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">local_transfer_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">te</span>
+                <span class="n">trans_entropy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">te</span><span class="p">)</span>
+
+        <span class="n">local_mutual_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_mutual_info</span>
+        <span class="n">mutual_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mutual_info</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="p">):</span>
+                <span class="n">local_mutual_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pi</span><span class="o">.</span><span class="n">mutual_info</span><span class="p">(</span>
+                    <span class="n">series</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">series</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">mutual_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">local_mutual_info</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+
+<div class="viewcode-block" id="Architecture.active_information"><a class="viewcode-back" href="../../information.html#neet.information.Architecture.active_information">[docs]</a>    <span class="k">def</span> <span class="nf">active_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the local or average active information</span>
+
+<span class="sd">        .. doctest:: information</span>
+
+<span class="sd">            &gt;&gt;&gt; arch = Architecture(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">            &gt;&gt;&gt; arch.active_information()</span>
+<span class="sd">            array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="sd">                   0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+<span class="sd">            &gt;&gt;&gt; lais = arch.active_information(local=True)</span>
+<span class="sd">            &gt;&gt;&gt; lais[1]</span>
+<span class="sd">            array([[0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                    0.13079175],</span>
+<span class="sd">                   [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                    0.13079175],</span>
+<span class="sd">                   [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                    0.13079175],</span>
+<span class="sd">                   ...,</span>
+<span class="sd">                   [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                    0.13079175],</span>
+<span class="sd">                   [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                    0.13079175],</span>
+<span class="sd">                   [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="sd">                    0.13079175]])</span>
+<span class="sd">            &gt;&gt;&gt; np.mean(lais[1])</span>
+<span class="sd">            0.4083435963963132</span>
+
+<span class="sd">        :param local: whether to return local (True) or global active information</span>
+<span class="sd">        :type local: bool</span>
+<span class="sd">        :return: a numpy array containing the (local) active information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_active_info</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__active_info</span></div>
+
+<div class="viewcode-block" id="Architecture.entropy_rate"><a class="viewcode-back" href="../../information.html#neet.information.Architecture.entropy_rate">[docs]</a>    <span class="k">def</span> <span class="nf">entropy_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the local or average entropy rate</span>
+
+<span class="sd">        .. doctest:: information</span>
+
+<span class="sd">            &gt;&gt;&gt; arch = Architecture(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">            &gt;&gt;&gt; arch.entropy_rate()</span>
+<span class="sd">            array([0.        , 0.01691208, 0.07280268, 0.07280268, 0.05841994,</span>
+<span class="sd">                   0.02479402, 0.03217332, 0.03217332, 0.08966941])</span>
+<span class="sd">            &gt;&gt;&gt; ler = arch.entropy_rate(local=True)</span>
+<span class="sd">            &gt;&gt;&gt; ler[4]</span>
+<span class="sd">            array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   ...,</span>
+<span class="sd">                   [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099]])</span>
+
+<span class="sd">        :param local: whether to return local (True) or global entropy rate</span>
+<span class="sd">        :type local: bool</span>
+<span class="sd">        :return: a numpy array containing the (local) entropy rate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_entropy_rate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__entropy_rate</span></div>
+
+<div class="viewcode-block" id="Architecture.transfer_entropy"><a class="viewcode-back" href="../../information.html#neet.information.Architecture.transfer_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the local or average transfer entropy</span>
+
+<span class="sd">        .. doctest:: information</span>
+
+<span class="sd">            &gt;&gt;&gt; arch = Architecture(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">            &gt;&gt;&gt; arch.transfer_entropy()</span>
+<span class="sd">            array([[ 0.00000000e+00,  3.37457926e-18, -2.18195687e-18,</span>
+<span class="sd">                    -2.18195687e-18, -5.39390581e-18,  3.37457926e-18,</span>
+<span class="sd">                     5.10930274e-18,  5.10930274e-18,  1.80248611e-18],</span>
+<span class="sd">                   [-3.25260652e-18, -3.25260652e-18, -3.05745013e-17,</span>
+<span class="sd">                    -3.05745013e-17,  1.69120759e-02, -3.25260652e-18,</span>
+<span class="sd">                    -3.25260652e-18, -3.25260652e-18, -3.25260652e-18],</span>
+<span class="sd">                   [-4.20670443e-17,  5.13704599e-02, -4.20670443e-17,</span>
+<span class="sd">                     1.22248438e-02,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="sd">                     6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="sd">                   [-4.20670443e-17,  5.13704599e-02,  1.22248438e-02,</span>
+<span class="sd">                    -4.20670443e-17,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="sd">                     6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="sd">                   [-1.09531524e-16,  5.84199434e-02,  4.76020591e-02,</span>
+<span class="sd">                     4.76020591e-02, -1.09531524e-16,  5.84199434e-02,</span>
+<span class="sd">                     4.76020591e-02,  4.76020591e-02, -1.09531524e-16],</span>
+<span class="sd">                   [-5.20417043e-18, -5.20417043e-18,  2.47940243e-02,</span>
+<span class="sd">                     2.47940243e-02, -5.20417043e-18, -5.20417043e-18,</span>
+<span class="sd">                     2.47940243e-02,  2.47940243e-02, -5.20417043e-18],</span>
+<span class="sd">                   [ 3.08997619e-17,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="sd">                     4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="sd">                     3.08997619e-17,  2.98276692e-03,  3.21733224e-02],</span>
+<span class="sd">                   [ 3.08997619e-17,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="sd">                     4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="sd">                     2.98276692e-03,  3.08997619e-17,  3.21733224e-02],</span>
+<span class="sd">                   [ 1.37693676e-17,  6.03036989e-02,  4.82889077e-02,</span>
+<span class="sd">                     4.82889077e-02,  8.96694146e-02,  6.03036989e-02,</span>
+<span class="sd">                     4.89270931e-02,  4.89270931e-02,  1.37693676e-17]])</span>
+
+<span class="sd">            &gt;&gt;&gt; lte = arch.transfer_entropy(local=True)</span>
+<span class="sd">            &gt;&gt;&gt; lte[4,3]</span>
+<span class="sd">            array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   ...,</span>
+<span class="sd">                   [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099],</span>
+<span class="sd">                   [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="sd">                    0.00507099]])</span>
+
+<span class="sd">        :param local: whether to return local (True) or global transfer entropy</span>
+<span class="sd">        :type local: bool</span>
+<span class="sd">        :return: a numpy array containing the (local) transfer entropy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_transfer_entropy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__transfer_entropy</span></div>
+
+<div class="viewcode-block" id="Architecture.mutual_information"><a class="viewcode-back" href="../../information.html#neet.information.Architecture.mutual_information">[docs]</a>    <span class="k">def</span> <span class="nf">mutual_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the local or average mutual information</span>
+
+<span class="sd">        .. doctest:: information</span>
+
+<span class="sd">            &gt;&gt;&gt; arch = Architecture(s_pombe, k=5, timesteps=20)</span>
+<span class="sd">            &gt;&gt;&gt; arch.mutual_information()</span>
+<span class="sd">            array([[0.16232618, 0.01374672, 0.00428548, 0.00428548, 0.01340937,</span>
+<span class="sd">                    0.01586238, 0.00516987, 0.00516987, 0.01102766],</span>
+<span class="sd">                   [0.01374672, 0.56660996, 0.00745714, 0.00745714, 0.00639113,</span>
+<span class="sd">                    0.32790848, 0.0067609 , 0.0067609 , 0.00468342],</span>
+<span class="sd">                   [0.00428548, 0.00745714, 0.83837294, 0.475582  , 0.21157695,</span>
+<span class="sd">                    0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="sd">                   [0.00428548, 0.00745714, 0.475582  , 0.83837294, 0.21157695,</span>
+<span class="sd">                    0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="sd">                   [0.01340937, 0.00639113, 0.21157695, 0.21157695, 0.57459066,</span>
+<span class="sd">                    0.00703145, 0.17560769, 0.17560769, 0.01233356],</span>
+<span class="sd">                   [0.01586238, 0.32790848, 0.00432855, 0.00432855, 0.00703145,</span>
+<span class="sd">                    0.51905053, 0.00621124, 0.00621124, 0.00260667],</span>
+<span class="sd">                   [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="sd">                    0.00621124, 0.80831657, 0.49349527, 0.10390475],</span>
+<span class="sd">                   [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="sd">                    0.00621124, 0.49349527, 0.80831657, 0.10390475],</span>
+<span class="sd">                   [0.01102766, 0.00468342, 0.12755745, 0.12755745, 0.01233356,</span>
+<span class="sd">                    0.00260667, 0.10390475, 0.10390475, 0.63423835]])</span>
+<span class="sd">            &gt;&gt;&gt; lmi = arch.mutual_information(local=True)</span>
+<span class="sd">            &gt;&gt;&gt; lmi[4,3]</span>
+<span class="sd">            array([[-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="sd">                     0.18484073,  0.18484073],</span>
+<span class="sd">                   [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="sd">                     0.18484073,  0.18484073],</span>
+<span class="sd">                   [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="sd">                     0.18484073,  0.18484073],</span>
+<span class="sd">                   ...,</span>
+<span class="sd">                   [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="sd">                     0.18484073,  0.18484073],</span>
+<span class="sd">                   [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="sd">                     0.18484073,  0.18484073],</span>
+<span class="sd">                   [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="sd">                     0.18484073,  0.18484073]])</span>
+
+<span class="sd">        :param local: whether to return local (True) or global mutual information</span>
+<span class="sd">        :type local: bool</span>
+<span class="sd">        :return: a numpy array containing the (local) mutual information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_mutual_info</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mutual_info</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

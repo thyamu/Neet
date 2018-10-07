@@ -1,0 +1,1356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Boolean Networks &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Synchronous Network Analysis" href="synchronous.html" />
+    <link rel="prev" title="Cellular Automata" href="automata.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Boolean Networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-neet.boolean.wtnetwork">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#weight-threshold-networks">Weight/Threshold Networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logic-based-networks">Logic-based Networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#network-type-conversion">Network Type Conversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#random-networks">Random networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-networks">Example Networks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Boolean Networks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/boolean.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-neet.boolean"></span><div class="section" id="boolean-networks">
+<h1>Boolean Networks<a class="headerlink" href="#boolean-networks" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-neet.boolean" title="neet.boolean: Boolean networks"><code class="xref py py-mod docutils literal notranslate"><span class="pre">neet.boolean</span></code></a> module provides network types (<a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">WTNetwork</span></code></a> and
+<a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogicNetwork</span></code></a>) and functions for simulating Boolean network modules.</p>
+<div class="section" id="module-neet.boolean.wtnetwork">
+<span id="api-documentation"></span><h2>API Documentation<a class="headerlink" href="#module-neet.boolean.wtnetwork" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="weight-threshold-networks">
+<h3>Weight/Threshold Networks<a class="headerlink" href="#weight-threshold-networks" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="neet.boolean.WTNetwork">
+<em class="property">class </em><code class="descclassname">neet.boolean.</code><code class="descname">WTNetwork</code><span class="sig-paren">(</span><em>weights</em>, <em>thresholds=None</em>, <em>names=None</em>, <em>theta=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>The WTNetwork class represents weight/threshold-based boolean networks. As
+such it is specified in terms of a matrix of edge weights (rows are target
+nodes) and a vector of node thresholds, and each node of the network is
+expected to be in either of two states <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>weights</em>, <em>thresholds=None</em>, <em>names=None</em>, <em>theta=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a network from weights and thresholds.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">weights</span>
+<span class="go">array([[1., 0.],</span>
+<span class="go">       [1., 1.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">thresholds</span>
+<span class="go">array([0., 0.])</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">weights</span>
+<span class="go">array([[1., 0.],</span>
+<span class="go">       [1., 1.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">thresholds</span>
+<span class="go">array([ 0.5, -0.5])</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">weights</span>
+<span class="go">array([[0., 0., 0.],</span>
+<span class="go">       [0., 0., 0.],</span>
+<span class="go">       [0., 0., 0.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">thresholds</span>
+<span class="go">array([0., 0., 0.])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>weights</strong> – the network weights, where: source/column -&gt; target/row</li>
+<li><strong>thresholds</strong> – the network thresholds</li>
+<li><strong>names</strong> – the names of the network nodes (optional)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parma theta:</th><td class="field-body"><p class="first">the threshold function to use</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">weights</span></code> is empty</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">weights</span></code> is not a square matrix</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">thresholds</span></code> is not a vector</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">weights</span></code> and <code class="docutils literal notranslate"><span class="pre">thresholds</span></code> have different
+dimensions</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">len(names)</span></code> is not equal to the number of
+nodes</li>
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">threshold_func</span></code> is not callable</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.boolean.WTNetwork.size">
+<code class="descname">size</code><a class="headerlink" href="#neet.boolean.WTNetwork.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of nodes in the network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">invalid network size</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.state_space">
+<code class="descname">state_space</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.state_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.state_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="statespace.html#neet.statespace.StateSpace" title="neet.statespace.StateSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.statespace.StateSpace</span></code></a> object for the network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">state_space</span><span class="p">()</span>
+<span class="go">&lt;neet.statespace.StateSpace object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">state_space</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+<span class="go">[[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the network’s <a class="reference internal" href="statespace.html#neet.statespace.StateSpace" title="neet.statespace.StateSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.statespace.StateSpace</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>states</em>, <em>index=None</em>, <em>pin=None</em>, <em>values=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update <code class="docutils literal notranslate"><span class="pre">states</span></code>, in place, according to the network update rules.</p>
+<p class="rubric">Basic Use</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">size</span>
+<span class="go">9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+<span class="go">[0, 0, 0, 0, 0, 0, 0, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+<span class="go">[0, 1, 1, 1, 0, 0, 1, 0, 0]</span>
+</pre></div>
+</div>
+<p class="rubric">Single-Node Update</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">index</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">[0, 0, 0, 0, 1, 0, 0, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">[0, 0, 1, 0, 1, 0, 0, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">[0, 0, 1, 1, 1, 0, 0, 0, 1]</span>
+</pre></div>
+</div>
+<p class="rubric">State Pinning</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">[0, 0, 0, 0, 0, 0, 0, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">[0, 0, 1, 1, 0, 0, 1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="go">[0, 0, 0, 0, 0, 0, 1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">[0, 0, 0, 0, 0, 0, 1, 0, 1]</span>
+</pre></div>
+</div>
+<p class="rubric">Value Fixing</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<span class="go">[1, 0, 1, 0, 0, 0, 0, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+<span class="go">[1, 0, 0, 1, 0, 0, 1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<span class="go">[0, 1, 1, 1, 0, 0, 1, 1, 1]</span>
+</pre></div>
+</div>
+<p class="rubric">Erroneous Usage</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">incorrect number of states in array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">invalid node state in states</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="mi">9</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">IndexError</span>: <span class="n">index 9 is out of bounds for axis 0 with size 9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">cannot provide both the index and pin arguments</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">IndexError</span>: <span class="n">index 10 is out of bounds for axis 1 with size 9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">cannot provide both the index and values arguments</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">cannot set a value for a pinned state</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">})</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">invalid state in values argument</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>states</strong> – the one-dimensional sequence of node states</li>
+<li><strong>index</strong> – the index to update (or None)</li>
+<li><strong>pin</strong> – the indices to pin (or None)</li>
+<li><strong>values</strong> – a dictionary of index-value pairs to set after update</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the updated states</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">states</span></code> is not in the network’s state space</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">index</span></code> and <code class="docutils literal notranslate"><span class="pre">pin</span></code> are both provided</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">index</span></code> and <code class="docutils literal notranslate"><span class="pre">values</span></code> are both provided</li>
+<li><strong>ValueError</strong> – if an element of <code class="docutils literal notranslate"><span class="pre">pin</span></code> is a key in <code class="docutils literal notranslate"><span class="pre">values</span></code></li>
+<li><strong>ValueError</strong> – if a value in <code class="docutils literal notranslate"><span class="pre">values</span></code> is not binary (0 or 1)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="neet.boolean.WTNetwork.read">
+<em class="property">static </em><code class="descname">read</code><span class="sig-paren">(</span><em>nodes_path</em>, <em>edges_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a network from a pair of node/edge files.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nodes_path</span> <span class="o">=</span> <span class="s1">&#39;../neet/boolean/data/s_pombe-nodes.txt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edges_path</span> <span class="o">=</span> <span class="s1">&#39;../neet/boolean/data/s_pombe-edges.txt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nodes_path</span><span class="p">,</span> <span class="n">edges_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">names</span>
+<span class="go">[&#39;SK&#39;, &#39;Cdc2_Cdc13&#39;, &#39;Ste9&#39;, &#39;Rum1&#39;, &#39;Slp1&#39;, &#39;Cdc2_Cdc13_active&#39;, &#39;Wee1_Mik1&#39;, &#39;Cdc25&#39;, &#39;PP&#39;]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>nodes_path</strong> (<em>str</em>) – path to the nodes file</li>
+<li><strong>edges_path</strong> (<em>str</em>) – path to the edges file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">WTNetwork</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.neighbors_in">
+<code class="descname">neighbors_in</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.neighbors_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.neighbors_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all neighbor nodes, where edge(neighbor_node–&gt;index)
+exists. An important consideration is that some threshold functions
+can introduce implicit dependence between nodes, e.g.
+<a class="reference internal" href="#neet.boolean.WTNetwork.split_threshold" title="neet.boolean.WTNetwork.split_threshold"><code class="xref py py-meth docutils literal notranslate"><span class="pre">WTNetwork.split_threshold()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – node index</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the set of all node indices which point toward the index node</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span>
+<span class="gp">... </span><span class="n">theta</span><span class="o">=</span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{0}, {0, 1, 2}, {1, 2}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[set(), {0, 2}, {1}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.neighbors_out">
+<code class="descname">neighbors_out</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.neighbors_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.neighbors_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all neighbor nodes, where
+edge(index–&gt;neighbor_node) exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – node index</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the set of all node indices which the index node points to</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Basic Use</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span>
+<span class="gp">... </span><span class="n">theta</span><span class="o">=</span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{0, 1}, {1, 2}, {1, 2}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{1}, {2}, {1}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.neighbors">
+<code class="descname">neighbors</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a set of neighbors for a specified node, or a list of sets of
+neighbors for all nodes in the network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – node index</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a set (if index!=None) or list of sets of neighbors of a
+node or network or nodes</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span>
+<span class="gp">... </span><span class="n">theta</span><span class="o">=</span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{0, 1}, {0, 1, 2}, {1, 2}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{1}, {0, 2}, {1}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.to_networkx_graph">
+<code class="descname">to_networkx_graph</code><span class="sig-paren">(</span><em>labels='indices'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.to_networkx_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.to_networkx_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return networkx graph given neet network.
+Return a <code class="docutils literal notranslate"><span class="pre">networkx</span></code> graph from a <a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">WTNetwork</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>labels</strong> – how nodes are labeled and thus identified in networkx
+graph (<code class="docutils literal notranslate"><span class="pre">'names'</span></code> or <code class="docutils literal notranslate"><span class="pre">'indices'</span></code>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.WTNetwork.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><em>labels='indices'</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output a file with a simple network drawing.</p>
+<p>Requires <code class="docutils literal notranslate"><span class="pre">networkx</span></code> and <code class="docutils literal notranslate"><span class="pre">pygraphviz</span></code>.</p>
+<p>Supported image formats are determined by <code class="docutils literal notranslate"><span class="pre">graphviz</span></code>. In particular,
+pdf support requires <code class="docutils literal notranslate"><span class="pre">cairo</span></code> and <code class="docutils literal notranslate"><span class="pre">pango</span></code> to be installed prior to
+<code class="docutils literal notranslate"><span class="pre">graphviz</span></code> installation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>labels</strong> – how node is labeled and thus identified in networkx
+graph (‘names’ or ‘indices’), only used if network is
+a <a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.LogicNetwork</span></code></a> or
+<a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">WTNetwork</span></code></a></li>
+<li><strong>filename</strong> – filename to write drawing to. Temporary filename will
+be used if no filename provided.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <code class="docutils literal notranslate"><span class="pre">pygraphviz</span></code> network drawing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="neet.boolean.WTNetwork.split_threshold">
+<em class="property">static </em><code class="descname">split_threshold</code><span class="sig-paren">(</span><em>values</em>, <em>states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.split_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.split_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the following functional form to the arguments:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\theta_s(x,y) = \begin{cases}
+    0 &amp; x &lt; 0 \\
+    y &amp; x = 0 \\
+    1 &amp; x &gt; 0.
+\end{cases}\end{split}\]</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">states</span></code> are iterable, then apply the above
+function to each pair <code class="docutils literal notranslate"><span class="pre">(x,y)</span> <span class="pre">in</span> <span class="pre">zip(values,</span> <span class="pre">states)</span></code> and stores
+the result in <code class="docutils literal notranslate"><span class="pre">states</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">states</span></code> are scalar values, then simply apply
+the above threshold function to the pair <code class="docutils literal notranslate"><span class="pre">(values,</span> <span class="pre">states)</span></code> and
+return the result.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ys</span><span class="p">)</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ys</span><span class="p">)</span>
+<span class="go">[1, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span>
+<span class="go">[1, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">split_threshold</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>values</strong> – the threshold-shifted values of each node</li>
+<li><strong>states</strong> – the pre-updated states of the nodes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the updated states</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="neet.boolean.WTNetwork.negative_threshold">
+<em class="property">static </em><code class="descname">negative_threshold</code><span class="sig-paren">(</span><em>values</em>, <em>states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.negative_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.negative_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the following functional form to the arguments:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\theta_n(x) = \begin{cases}
+    0 &amp; x \leq 0 \\
+    1 &amp; x &gt; 0.
+\end{cases}\end{split}\]</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">states</span></code> are iterable, then apply the above
+function to each pair <code class="docutils literal notranslate"><span class="pre">(x,y)</span> <span class="pre">in</span> <span class="pre">zip(values,</span> <span class="pre">states)</span></code> and stores
+the result in <code class="docutils literal notranslate"><span class="pre">states</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">states</span></code> are scalar values, then simply apply
+the above threshold function to the pair <code class="docutils literal notranslate"><span class="pre">(values,</span> <span class="pre">states)</span></code> and
+return the result.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ys</span><span class="p">)</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ys</span><span class="p">)</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">negative_threshold</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>values</strong> – the threshold-shifted values of each node</li>
+<li><strong>states</strong> – the pre-updated states of the nodes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the updated states</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="neet.boolean.WTNetwork.positive_threshold">
+<em class="property">static </em><code class="descname">positive_threshold</code><span class="sig-paren">(</span><em>values</em>, <em>states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/wtnetwork.html#WTNetwork.positive_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.WTNetwork.positive_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the following functional form to the arguments:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\theta_p(x) = \begin{cases}
+    0 &amp; x &lt; 0 \\
+    1 &amp; x \geq 0.
+\end{cases}\end{split}\]</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">states</span></code> are iterable, then apply the above
+function to each pair <code class="docutils literal notranslate"><span class="pre">(x,y)</span> <span class="pre">in</span> <span class="pre">zip(values,</span> <span class="pre">states)</span></code> and stores
+the result in <code class="docutils literal notranslate"><span class="pre">states</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">values</span></code> and <code class="docutils literal notranslate"><span class="pre">states</span></code> are scalar values, then simply apply
+the above threshold function to the pair <code class="docutils literal notranslate"><span class="pre">(values,</span> <span class="pre">states)</span></code> and
+return the result.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">positive_threshold</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ys</span><span class="p">)</span>
+<span class="go">[1, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span>
+<span class="go">[1, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">positive_threshold</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ys</span><span class="p">)</span>
+<span class="go">[1, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span>
+<span class="go">[1, 0, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">positive_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">positive_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">positive_threshold</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">WTNetwork</span><span class="o">.</span><span class="n">positive_threshold</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>values</strong> – the threshold-shifted values of each node</li>
+<li><strong>states</strong> – the pre-updated states of the nodes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the updated states</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-neet.boolean.logicnetwork"></span><div class="section" id="logic-based-networks">
+<h3>Logic-based Networks<a class="headerlink" href="#logic-based-networks" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="neet.boolean.LogicNetwork">
+<em class="property">class </em><code class="descclassname">neet.boolean.</code><code class="descname">LogicNetwork</code><span class="sig-paren">(</span><em>table</em>, <em>names=None</em>, <em>reduced=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>The LogicNetwork class represents boolean networks whose update rules
+follow logic relations among nodes. Each node state is expressed as <code class="docutils literal notranslate"><span class="pre">0</span></code>
+or <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>table</em>, <em>names=None</em>, <em>reduced=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a network from a logic truth table.</p>
+<p>A truth table stores a list of tuples, one for each node in order. A
+tuple of the form <cite>(A, {C1, C2, …})</cite> at index <cite>i</cite> provides the
+activation conditions for the node of index <cite>i</cite>. <cite>A</cite> is a tuple marking
+the indices of the nodes which influence the state of node <cite>i</cite> via
+logic relations. <cite>{C1, C2, …}</cite> is a set, each element of which is the
+collection of binary states of these influencing nodes that would
+activate node <cite>i</cite>, setting it to <cite>1</cite>. Any other collection of states of
+nodes in <cite>A</cite> are assumed to deactivate node <cite>i</cite>, setting it to <cite>0</cite>.</p>
+<p><cite>C1</cite>, <cite>C2</cite>, etc. are sequences (<cite>tuple</cite> or <cite>str</cite>) of binary digits,
+each being the binary state of corresponding node in <cite>A</cite>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">table</span>
+<span class="go">[((0,), {&#39;0&#39;})]</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">table</span> <span class="o">==</span> <span class="p">[((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">})],</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">names</span>
+<span class="go">[&#39;A&#39;, &#39;B&#39;, &#39;C&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">table</span> <span class="o">==</span> <span class="p">[((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">})]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>table</strong> – the logic table</li>
+<li><strong>names</strong> – names of nodes, default None</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.boolean.LogicNetwork.size">
+<code class="descname">size</code><a class="headerlink" href="#neet.boolean.LogicNetwork.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of nodes in the network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;11&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.state_space">
+<code class="descname">state_space</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.state_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.state_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="statespace.html#neet.statespace.StateSpace" title="neet.statespace.StateSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.statespace.StateSpace</span></code></a> object for the network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;11&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">state_space</span><span class="p">()</span>
+<span class="go">&lt;neet.statespace.StateSpace object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">state_space</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+<span class="go">[[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the network’s <a class="reference internal" href="statespace.html#neet.statespace.StateSpace" title="neet.statespace.StateSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.statespace.StateSpace</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>net_state</em>, <em>index=None</em>, <em>pin=None</em>, <em>values=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update node states according to the truth table.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">index</span></code> is provided, only update the node at <code class="docutils literal notranslate"><span class="pre">index</span></code>. If
+<code class="docutils literal notranslate"><span class="pre">index</span></code> is not provided, update all ndoes. <code class="docutils literal notranslate"><span class="pre">pin</span></code> provides the
+indices of which the nodes’ states are forced to remain unchanged.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">[1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">[0]</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">[1, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">[1, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">[1, 0]</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">[0, 1, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">[1, 1, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">[1, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">[0, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+<span class="go">[0, 1, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pin</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+<span class="go">[0, 0, 0]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net_state</strong> (<em>sequence</em>) – a sequence of binary node states</li>
+<li><strong>index</strong> (<em>int</em><em> or </em><em>None</em>) – the index to update (or None)</li>
+<li><strong>pin</strong> (<em>sequence</em>) – the indices to pin (or None)</li>
+<li><strong>values</strong> (<em>dict</em>) – override values</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the updated states</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.reduce_table">
+<code class="descname">reduce_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.reduce_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.reduce_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduce truth table by removing input nodes which have no logic
+influence from the truth table of each node.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function introduces the identity function for all nodes which
+have no inputs. This ensure that every node has a well-defined
+logical function. The example below demonstrates this with node
+<code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;00&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">table</span> <span class="o">==</span> <span class="p">[((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;00&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">})]</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">reduce_table</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">table</span> <span class="o">==</span> <span class="p">[((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;0&#39;</span><span class="p">}),</span> <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="neet.boolean.LogicNetwork.read_table">
+<em class="property">classmethod </em><code class="descname">read_table</code><span class="sig-paren">(</span><em>table_path</em>, <em>reduced=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.read_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.read_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a network from a truth table file.</p>
+<p>A logic table file starts with a table title which contains names of
+all nodes. It is a line marked by <code class="docutils literal notranslate"><span class="pre">##</span></code> at the begining with node
+names seperated by commas or spaces. This line is required. For
+artificial network without node names, arbitrary names must be put in
+place, e.g.:</p>
+<p><code class="docutils literal notranslate"><span class="pre">##</span> <span class="pre">A</span> <span class="pre">B</span> <span class="pre">C</span> <span class="pre">D</span></code></p>
+<p>Following are the sub-tables of logic conditions for every node. Each
+sub-table nominates a node and its logically connected nodes in par-
+enthesis as a comment line:</p>
+<p><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">A</span> <span class="pre">(B</span> <span class="pre">C)</span></code></p>
+<p>The rest of the sub-table are states of those nodes in parenthesis
+<code class="docutils literal notranslate"><span class="pre">(B,</span> <span class="pre">C)</span></code> that would activate the state of A. States that would
+deactivate <code class="docutils literal notranslate"><span class="pre">A</span></code> should not be included in the sub-table.</p>
+<p>A complete logic table with 3 nodes A, B, C would look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## A B C</span>
+<span class="c1"># A (B C)</span>
+<span class="mi">1</span> <span class="mi">0</span>
+<span class="mi">1</span> <span class="mi">1</span>
+<span class="c1"># B (A)</span>
+<span class="mi">1</span>
+<span class="c1"># C (B C A)</span>
+<span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Custom comments can be added above or below the table title (as long as
+they are preceeded with more or less than two <code class="docutils literal notranslate"><span class="pre">#</span></code> (eg <code class="docutils literal notranslate"><span class="pre">#</span></code> or
+<code class="docutils literal notranslate"><span class="pre">###</span></code> but not <code class="docutils literal notranslate"><span class="pre">##</span></code>)).</p>
+<p class="rubric">Examples:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myeloid_path</span> <span class="o">=</span> <span class="s1">&#39;../neet/boolean/data/myeloid-truth_table.txt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">myeloid_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">names</span>
+<span class="go">[&#39;GATA-2&#39;, &#39;GATA-1&#39;, &#39;FOG-1&#39;, &#39;EKLF&#39;, &#39;Fli-1&#39;, &#39;SCL&#39;, &#39;C/EBPa&#39;, &#39;PU.1&#39;, &#39;cJun&#39;, &#39;EgrNab&#39;, &#39;Gfi-1&#39;]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table_path</strong> (<em>str</em>) – a path to a table table file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogicNetwork</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="neet.boolean.LogicNetwork.read_logic">
+<em class="property">classmethod </em><code class="descname">read_logic</code><span class="sig-paren">(</span><em>logic_path</em>, <em>external_nodes_path=None</em>, <em>reduced=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.read_logic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.read_logic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a network from a file of logic equations.</p>
+<p>A logic equations has the form of <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">B</span> <span class="pre">AND</span> <span class="pre">(</span> <span class="pre">C</span> <span class="pre">OR</span> <span class="pre">D</span> <span class="pre">)</span></code>, each term
+being separated from parantheses and logic operators with at least a
+space. The optional <code class="docutils literal notranslate"><span class="pre">external_nodes_path</span></code> takes a file that contains
+nodes in a column whose states do not depend on any nodes. These are
+considered “external” nodes. Equivalently, such a node would have a
+logic equation <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">A</span></code>, for its state stays on or off unless being
+set externally, but now the node had to be excluded from
+<code class="docutils literal notranslate"><span class="pre">external_nodes_path</span></code> to avoid duplication and confusion.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myeloid_path</span> <span class="o">=</span> <span class="s1">&#39;../neet/boolean/data/myeloid-logic_expressions.txt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="o">.</span><span class="n">read_logic</span><span class="p">(</span><span class="n">myeloid_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">size</span>
+<span class="go">11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">names</span>
+<span class="go">[&#39;GATA-2&#39;, &#39;GATA-1&#39;, &#39;FOG-1&#39;, &#39;EKLF&#39;, &#39;Fli-1&#39;, &#39;SCL&#39;, &#39;C/EBPa&#39;, &#39;PU.1&#39;, &#39;cJun&#39;, &#39;EgrNab&#39;, &#39;Gfi-1&#39;]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>logic_path</strong> (<em>str</em>) – path to a file of logial expressions</li>
+<li><strong>external_nodes_path</strong> (<em>str</em>) – a path to a file of external nodes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogicNetwork</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.neighbors_in">
+<code class="descname">neighbors_in</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.neighbors_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.neighbors_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all neighbor nodes, where edge(neighbor_node–&gt;index)
+exists.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;010&#39;</span><span class="p">,</span> <span class="s1">&#39;011&#39;</span><span class="p">,</span> <span class="s1">&#39;101&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">3</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{1, 2}, {0}, {0, 1, 2}, {3}]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – node index</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the set of all node indices which point toward the index node</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.neighbors_out">
+<code class="descname">neighbors_out</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.neighbors_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.neighbors_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of all neighbor nodes, where edge(index–&gt;neighbor_node)
+exists.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;010&#39;</span><span class="p">,</span> <span class="s1">&#39;011&#39;</span><span class="p">,</span> <span class="s1">&#39;101&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">3</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{1, 2}, {0, 2}, {0, 2}, {3}]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – node index</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the set of all node indices which the index node points to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.neighbors">
+<code class="descname">neighbors</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a set of neighbors for a specified node, or a list of sets of
+neighbors for all nodes in the network.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">LogicNetwork</span><span class="p">([((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{</span><span class="s1">&#39;010&#39;</span><span class="p">,</span> <span class="s1">&#39;011&#39;</span><span class="p">,</span> <span class="s1">&#39;101&#39;</span><span class="p">}),</span>
+<span class="gp">... </span><span class="p">((</span><span class="mi">3</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;1&#39;</span><span class="p">})])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+<span class="go">[{1, 2}, {0, 2}, {0, 1, 2}, {3}]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – node index</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a set of neighbors of a node</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.to_networkx_graph">
+<code class="descname">to_networkx_graph</code><span class="sig-paren">(</span><em>labels='indices'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.to_networkx_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.to_networkx_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return networkx graph given neet network.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>labels</strong> – how node is labeled and thus identified in networkx
+graph (<code class="docutils literal notranslate"><span class="pre">'names'</span></code> or <code class="docutils literal notranslate"><span class="pre">'indices'</span></code>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.boolean.LogicNetwork.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><em>labels='indices'</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/logicnetwork.html#LogicNetwork.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.LogicNetwork.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output a file with a simple network drawing.</p>
+<p>Requires <code class="docutils literal notranslate"><span class="pre">networkx</span></code> and <code class="docutils literal notranslate"><span class="pre">pygraphviz</span></code>.</p>
+<p>Supported image formats are determined by <code class="docutils literal notranslate"><span class="pre">graphviz</span></code>. In particular,
+pdf support requires <code class="docutils literal notranslate"><span class="pre">'cairo'</span></code> and <code class="docutils literal notranslate"><span class="pre">'pango'</span></code> to be installed prior
+to graphviz installation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>labels</strong> – how node is labeled and thus identified in networkx
+graph (<code class="docutils literal notranslate"><span class="pre">'names'</span></code> or <code class="docutils literal notranslate"><span class="pre">'indices'</span></code>), only used if
+network is a <a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogicNetwork</span></code></a> or
+<a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.WTNetwork</span></code></a></li>
+<li><strong>filename</strong> – filename to write drawing to. Temporary filename will
+be used if no filename provided.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <code class="docutils literal notranslate"><span class="pre">pygraphviz</span></code> network drawing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-neet.boolean.conv"></span><div class="section" id="network-type-conversion">
+<h3>Network Type Conversion<a class="headerlink" href="#network-type-conversion" title="Permalink to this headline">¶</a></h3>
+<p>Some algorithms are more efficiently implemented on particular network type.
+This module allows the user to convert between network types, though not all
+conversions are possible. For example, not every
+<a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.LogicNetwork</span></code></a> can be converted to a
+<a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.WTNetwork</span></code></a>, though the reverse direction is always
+possible.</p>
+<dl class="function">
+<dt id="neet.boolean.conv.wt_to_logic">
+<code class="descclassname">neet.boolean.conv.</code><code class="descname">wt_to_logic</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/conv.html#wt_to_logic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.conv.wt_to_logic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a <a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.WTNetwork</span></code></a> to a
+<a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.LogicNetwork</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s_pombe_logical</span> <span class="o">=</span> <span class="n">wt_to_logic</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">s_pombe_logical</span><span class="p">,</span> <span class="n">LogicNetwork</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transitions</span><span class="p">(</span><span class="n">s_pombe_logical</span><span class="p">)</span> <span class="o">==</span> <span class="n">transitions</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>net</strong> (<a class="reference internal" href="#neet.boolean.WTNetwork" title="neet.boolean.WTNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.WTNetwork</span></code></a>) – a network to convert</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">an equivalent <a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.LogicNetwork</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-neet.boolean.randomnet"></span><div class="section" id="random-networks">
+<h3>Random networks<a class="headerlink" href="#random-networks" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.boolean.randomnet.random_logic">
+<code class="descclassname">neet.boolean.randomnet.</code><code class="descname">random_logic</code><span class="sig-paren">(</span><em>logic_net</em>, <em>p=0.5</em>, <em>connections='fixed-structure'</em>, <em>fix_external=False</em>, <em>make_irreducible=False</em>, <em>fix_canalizing=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/boolean/randomnet.html#random_logic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.boolean.randomnet.random_logic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <code class="docutils literal notranslate"><span class="pre">LogicNetwork</span></code> from an input <code class="docutils literal notranslate"><span class="pre">LogicNetwork</span></code> with a random
+logic table.</p>
+<p><code class="docutils literal notranslate"><span class="pre">connections</span></code> decides how a node in the random network is connected to
+other nodes:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">'fixed-structure'</span></code></dt>
+<dd>the random network has the same connections as the input network.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'fixed-in-degree'</span></code></dt>
+<dd>the number of connections to a node is the same as the input
+network, but the connections are randomly selected.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'fixed-mean-degree'</span></code></dt>
+<dd>the total number of edges is conserved, but edges are placed
+randomly between nodes.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'free'</span></code></dt>
+<dd>only the number of nodes is conserved, with the number of
+connections to a node chosen uniformly between 1 and the total
+number of nodes.</dd>
+</dl>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">p</span></code> is the probability of a state of the connected nodes being present in
+the activation table. It is also equavolent to the probability of any node
+being activated. If <code class="docutils literal notranslate"><span class="pre">p</span></code> is a single number, it applies to all nodes.
+Otherwise <code class="docutils literal notranslate"><span class="pre">p</span></code> must be a sequence of numbers that match in size with the
+input network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">random_logic</span><span class="p">(</span><span class="n">myeloid</span><span class="p">,</span> <span class="n">connections</span><span class="o">=</span><span class="s1">&#39;fixed-structure&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">net</span><span class="p">)</span> <span class="o">==</span> <span class="n">neighbors_in</span><span class="p">(</span><span class="n">myeloid</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">net</span><span class="p">)</span> <span class="o">==</span> <span class="n">neighbors_out</span><span class="p">(</span><span class="n">myeloid</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">random_logic</span><span class="p">(</span><span class="n">myeloid</span><span class="p">,</span> <span class="n">connections</span><span class="o">=</span><span class="s1">&#39;fixed-in-degree&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">in_degree</span><span class="p">(</span><span class="n">net</span><span class="p">)</span> <span class="o">==</span> <span class="n">in_degree</span><span class="p">(</span><span class="n">myeloid</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">out_degree</span><span class="p">(</span><span class="n">net</span><span class="p">)</span> <span class="o">==</span> <span class="n">out_degree</span><span class="p">(</span><span class="n">myeloid</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">random_logic</span><span class="p">(</span><span class="n">myeloid</span><span class="p">,</span> <span class="n">connections</span><span class="o">=</span><span class="s1">&#39;fixed-mean-degree&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean_degree</span><span class="p">(</span><span class="n">net</span><span class="p">)</span> <span class="o">==</span> <span class="n">mean_degree</span><span class="p">(</span><span class="n">myeloid</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>logic_net</strong> – a <a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.LogicNetwork</span></code></a></li>
+<li><strong>p</strong> (<em>number</em><em> or </em><em>sequence</em>) – probability that a state is present in the activation table</li>
+<li><strong>connections</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">'fixed-structure'</span></code>, <code class="docutils literal notranslate"><span class="pre">'fixed-in-degree'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'fixed-mean-degree'</span></code>, or <code class="docutils literal notranslate"><span class="pre">'free'</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a random <a class="reference internal" href="#neet.boolean.LogicNetwork" title="neet.boolean.LogicNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">neet.boolean.LogicNetwork</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-neet.boolean.examples"></span><div class="section" id="example-networks">
+<h3>Example Networks<a class="headerlink" href="#example-networks" title="Permalink to this headline">¶</a></h3>
+<p>The examples module provides a collection of pre-loaded model networks such as
+<a class="reference internal" href="#neet.boolean.examples.s_pombe" title="neet.boolean.examples.s_pombe"><code class="xref py py-attr docutils literal notranslate"><span class="pre">s_pombe</span></code></a> (fission yeast) and <a class="reference internal" href="#neet.boolean.examples.s_cerevisiae" title="neet.boolean.examples.s_cerevisiae"><code class="xref py py-attr docutils literal notranslate"><span class="pre">s_cerevisiae</span></code></a> (budding yeast).</p>
+<dl class="data">
+<dt id="neet.boolean.examples.s_pombe">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">s_pombe</code><em class="property"> = &lt;neet.boolean.WTNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.s_pombe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The cell cycle network for <em>S. pombe</em> (fission yeast).</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="neet.boolean.examples.s_cerevisiae">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">s_cerevisiae</code><em class="property"> = &lt;neet.boolean.WTNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.s_cerevisiae" title="Permalink to this definition">¶</a></dt>
+<dd><p>The cell cycle network for <em>S. cerevisiae</em> (budding yeast).</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="neet.boolean.examples.c_elegans">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">c_elegans</code><em class="property"> = &lt;neet.boolean.WTNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.c_elegans" title="Permalink to this definition">¶</a></dt>
+<dd><p>The cell cycle network for <em>C. elegans</em>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="neet.boolean.examples.p53_no_dmg">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">p53_no_dmg</code><em class="property"> = &lt;neet.boolean.WTNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.p53_no_dmg" title="Permalink to this definition">¶</a></dt>
+<dd><p>The p53 GRN with no damage present.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="neet.boolean.examples.p53_dmg">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">p53_dmg</code><em class="property"> = &lt;neet.boolean.WTNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.p53_dmg" title="Permalink to this definition">¶</a></dt>
+<dd><p>The p53 GRN with damage present.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="neet.boolean.examples.mouse_cortical_7B">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">mouse_cortical_7B</code><em class="property"> = &lt;neet.boolean.LogicNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.mouse_cortical_7B" title="Permalink to this definition">¶</a></dt>
+<dd><p>The gene regulatory network for <em>mouse cortical</em> (7B edges)</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="neet.boolean.examples.mouse_cortical_7C">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">mouse_cortical_7C</code><em class="property"> = &lt;neet.boolean.LogicNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.mouse_cortical_7C" title="Permalink to this definition">¶</a></dt>
+<dd><p>The gene regulatory network for <em>mouse cortical</em> (7C edges)</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="neet.boolean.examples.myeloid">
+<code class="descclassname">neet.boolean.examples.</code><code class="descname">myeloid</code><em class="property"> = &lt;neet.boolean.LogicNetwork object&gt;</em><a class="headerlink" href="#neet.boolean.examples.myeloid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Differentiation control network for <em>myeloid</em> progenitors.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="synchronous.html" class="btn btn-neutral float-right" title="Synchronous Network Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="automata.html" class="btn btn-neutral" title="Cellular Automata" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

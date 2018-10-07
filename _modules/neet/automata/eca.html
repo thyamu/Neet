@@ -1,0 +1,803 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neet.automata.eca &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>neet.automata.eca</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for neet.automata.eca</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Elementary Cellular Automata</span>
+<span class="sd">============================</span>
+
+<span class="sd">The :class:`neet.automata.eca.ECA` class describes an `Elementary Cellular</span>
+<span class="sd">Automaton &lt;https://en.wikipedia.org/wiki/Elementary_cellular_automaton&gt;`_</span>
+<span class="sd">with an arbitrary rule. The ``ECA`` class is **not** a fixed sized network.</span>
+<span class="sd">This means that the size is determined when it is used based on arguments</span>
+<span class="sd">passed to the relevant methods or functions.</span>
+
+<span class="sd">.. rubric:: Examples</span>
+
+<span class="sd">.. doctest:: automata</span>
+
+<span class="sd">    &gt;&gt;&gt; ca = ECA(30)</span>
+<span class="sd">    &gt;&gt;&gt; ca.update([0, 0, 1, 0, 0])</span>
+<span class="sd">    [0, 1, 1, 1, 0]</span>
+<span class="sd">    &gt;&gt;&gt; ca.update([0, 1, 0])</span>
+<span class="sd">    [1, 1, 1]</span>
+<span class="sd">    &gt;&gt;&gt; transitions(ca, size=3)</span>
+<span class="sd">    [[0, 0, 0], [1, 1, 1], [1, 1, 1], [1, 0, 0], [1, 1, 1], [0, 0, 1], [0, 1, 0], [0, 0, 0]]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">neet.statespace</span> <span class="k">import</span> <span class="n">StateSpace</span>
+
+
+<div class="viewcode-block" id="ECA"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA">[docs]</a><span class="k">class</span> <span class="nc">ECA</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ECA is a class to represent elementary cellular automaton rules. Each ECA</span>
+<span class="sd">    contains an 8-bit integral member variable ``code`` representing the</span>
+<span class="sd">    Wolfram code for the ECA rule and a set of boundary conditions which is</span>
+<span class="sd">    either ``None``, signifying periodic boundary conditions, or a pair of</span>
+<span class="sd">    cell states signifying fixed, open boundary conditions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ECA.__init__"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct an elementary cellular automaton rule.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; ca.code</span>
+<span class="sd">            30</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary</span>
+<span class="sd">            &gt;&gt;&gt; ca = ECA(30, boundary=(0,0))</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary</span>
+<span class="sd">            (0, 0)</span>
+
+<span class="sd">        :param code: the Wolfram code for the ECA</span>
+<span class="sd">        :type code: int</span>
+<span class="sd">        :param boundary: the boundary conditions for the CA</span>
+<span class="sd">        :type boundary: tuple or None</span>
+<span class="sd">        :raises TypeError: if ``code`` is not an instance of int</span>
+<span class="sd">        :raises ValueError: if ``code`` is not in :math:`\{0,1,\ldots,255\}`</span>
+<span class="sd">        :raises TypeError: if ``boundary`` is neither ``None`` or an instance</span>
+<span class="sd">                           of tuple</span>
+<span class="sd">        :raises ValueError: if ``boundary`` is a neither ``None`` or a pair of</span>
+<span class="sd">                            binary states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="o">=</span> <span class="n">boundary</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Wolfram code of the elementary cellular automaton</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; eca = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; eca.code</span>
+<span class="sd">            30</span>
+<span class="sd">            &gt;&gt;&gt; eca.code = 45</span>
+<span class="sd">            &gt;&gt;&gt; eca.code</span>
+<span class="sd">            45</span>
+<span class="sd">            &gt;&gt;&gt; eca.code = 256</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: invalid ECA code</span>
+
+<span class="sd">        :type: int</span>
+<span class="sd">        :raises TypeError: if ``code`` is not an instance of int</span>
+<span class="sd">        :raises ValueError: if ``code`` is not in :math:`\{0,1,\ldots,255\}`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__code</span>
+
+    <span class="nd">@code</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ECA code is not an int&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">255</span> <span class="o">&lt;</span> <span class="n">code</span> <span class="ow">or</span> <span class="n">code</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid ECA code&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__code</span> <span class="o">=</span> <span class="n">code</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">boundary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The boundary conditions of the elemenary cellular automaton</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; eca = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; eca.boundary</span>
+<span class="sd">            &gt;&gt;&gt; eca.boundary = (0,1)</span>
+<span class="sd">            &gt;&gt;&gt; eca.boundary</span>
+<span class="sd">            (0, 1)</span>
+<span class="sd">            &gt;&gt;&gt; eca.boundary = None</span>
+<span class="sd">            &gt;&gt;&gt; eca.boundary</span>
+<span class="sd">            &gt;&gt;&gt; eca.boundary = [0,1]</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            TypeError: ECA boundary are neither None nor a tuple</span>
+
+<span class="sd">        :type: ``None`` or tuple</span>
+<span class="sd">        :raises TypeError: if ``boundary`` is neither ``None`` or an instance</span>
+<span class="sd">                           of tuple</span>
+<span class="sd">        :raises ValueError: if ``boundary`` is a neither ``None`` or a pair of</span>
+<span class="sd">                            binary states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__boundary</span>
+
+    <span class="nd">@boundary</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">boundary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">boundary</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">boundary</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;ECA boundary are neither None nor a tuple&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">boundary</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid ECA boundary conditions&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">boundary</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid ECA boundary value&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__boundary</span> <span class="o">=</span> <span class="n">boundary</span>
+
+<div class="viewcode-block" id="ECA.state_space"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.state_space">[docs]</a>    <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a :class:`neet.statespace.StateSpace` object for a</span>
+<span class="sd">        lattice of length ``n``.</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; eca = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; eca.state_space(3)</span>
+<span class="sd">            &lt;neet.statespace.StateSpace object at 0x...&gt;</span>
+<span class="sd">            &gt;&gt;&gt; space = eca.state_space(3)</span>
+<span class="sd">            &gt;&gt;&gt; list(space)</span>
+<span class="sd">            [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+
+<span class="sd">        :param n: the number of nodes in the lattice</span>
+<span class="sd">        :type n: int</span>
+<span class="sd">        :returns: :class:`neet.statespace.StateSpace`</span>
+<span class="sd">        :raises ValueError: if ``n &lt; 1``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">StateSpace</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_unsafe_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lattice</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the state of the ``lattice``, in place, without</span>
+<span class="sd">        checking the validity of the arguments.</span>
+
+<span class="sd">        .. rubric:: Basic Use:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update(xs)</span>
+<span class="sd">            [0, 1, 1, 1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update([0,0,1,0,0])</span>
+<span class="sd">            [1, 1, 1, 1, 1]</span>
+
+<span class="sd">        .. rubric:: Single-Node Update:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca.boundary = None</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update(xs, index=1)</span>
+<span class="sd">            [0, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; xs</span>
+<span class="sd">            [0, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update(xs, index=-1)</span>
+<span class="sd">            [0, 1, 1, 0, 1]</span>
+
+<span class="sd">        .. rubric:: State Pinning:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca.boundary = None</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update(xs, pin=[-2])</span>
+<span class="sd">            [0, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update(xs, pin=[4])</span>
+<span class="sd">            [0, 1, 0, 1, 0]</span>
+
+<span class="sd">        .. rubric:: Value Fixing:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca.boundary = None</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update(xs, values={0:1,-2:0})</span>
+<span class="sd">            [1, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; xs = [1,1,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca._unsafe_update(xs, values={1:0,-1:0})</span>
+<span class="sd">            [0, 0, 0, 1, 0]</span>
+
+<span class="sd">        :param lattice: the one-dimensional sequence of states</span>
+<span class="sd">        :type lattice: sequence</span>
+<span class="sd">        :param index: the index to update (or None)</span>
+<span class="sd">        :param pin: a sequence of indicies to pin (or None)</span>
+<span class="sd">        :param values: a dictionary of index-value pairs to fix after update</span>
+<span class="sd">        :returns: the updated lattice</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pin_states</span> <span class="o">=</span> <span class="n">pin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pin</span> <span class="o">!=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__boundary</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__boundary</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">lattice</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pin_states</span><span class="p">:</span>
+                <span class="n">pinned</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lattice</span><span class="p">)[</span><span class="n">pin</span><span class="p">]</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">left</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lattice</span><span class="p">)):</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">lattice</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">code</span> <span class="o">&gt;&gt;</span> <span class="n">temp</span><span class="p">)</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span>
+            <span class="n">lattice</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">code</span> <span class="o">&gt;&gt;</span> <span class="n">temp</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pin_states</span><span class="p">:</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pin</span><span class="p">):</span>
+                    <span class="n">lattice</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pinned</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lattice</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">left</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">lattice</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">temp</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">lattice</span><span class="p">):</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">right</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">lattice</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">lattice</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">code</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">7</span> <span class="o">&amp;</span> <span class="n">temp</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="n">lattice</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">lattice</span>
+
+<div class="viewcode-block" id="ECA.update"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lattice</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the state of the ``lattice`` in place.</span>
+
+<span class="sd">        .. rubric:: Basic Use:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs)</span>
+<span class="sd">            [0, 1, 1, 1, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; ca.update([0,0,1,0,0])</span>
+<span class="sd">            [1, 1, 1, 1, 1]</span>
+
+<span class="sd">        .. rubric:: Single-Node Update:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca.boundary = None</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs, index=1)</span>
+<span class="sd">            [0, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; xs</span>
+<span class="sd">            [0, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs, index=-1)</span>
+<span class="sd">            [0, 1, 1, 0, 1]</span>
+
+<span class="sd">        .. rubric:: State Pinning:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca.boundary = None</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs, pin=[-2])</span>
+<span class="sd">            [0, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs, pin=[4])</span>
+<span class="sd">            [0, 1, 0, 1, 0]</span>
+
+<span class="sd">        .. rubric:: Value Fixing:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; ca.boundary = None</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs, values={0:1,-2:0})</span>
+<span class="sd">            [1, 1, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; xs = [1,1,1,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs, values={1:0,-1:0})</span>
+<span class="sd">            [0, 0, 0, 1, 0]</span>
+
+<span class="sd">        .. rubric:: Erroneous Usage:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; xs = []</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: lattice is empty</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,2,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: invalid value &quot;2&quot; in lattice</span>
+<span class="sd">            &gt;&gt;&gt; ca.update(xs, index=5)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: the provided state is not in the ECA&#39;s state space</span>
+<span class="sd">            &gt;&gt;&gt; ca.update([0,0,1,0,0,], index=1, pin=[0])</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: cannot provide both the index and pin arguments</span>
+<span class="sd">            &gt;&gt;&gt; ca.update([0,0,1,0,0], index=1, values={0:0})</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: cannot provide both the index and values arguments</span>
+<span class="sd">            &gt;&gt;&gt; ca.update([0,0,1,0,0], pin=[2], values={2:0})</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: cannot set a value for a pinned state</span>
+<span class="sd">            &gt;&gt;&gt; ca.update([0,0,1,0,0], values={2:2})</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: invalid state in values argument</span>
+
+<span class="sd">        :param lattice: the one-dimensional sequence of states</span>
+<span class="sd">        :param index: the index to update (or None)</span>
+<span class="sd">        :param pin: a sequence of indicies to pin (or None)</span>
+<span class="sd">        :param values: a dictionary of index-value pairs to fix after update</span>
+<span class="sd">        :returns: the updated lattice</span>
+<span class="sd">        :raises ValueError: if ``lattice`` is not in the ECA&#39;s state space</span>
+<span class="sd">        :raises IndexError: if ``index is not None and index &gt; len(states)``</span>
+<span class="sd">        :raises ValueError: if ``index`` and ``pin`` are both provided</span>
+<span class="sd">        :raises ValueError: if ``index`` and ``values`` are both provided</span>
+<span class="sd">        :raises ValueError: if an element of ``pin`` is a key in ``values``</span>
+<span class="sd">        :raises ValueError: if a value in ``values`` is not binary (0 or 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lattice</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lattice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;the provided state is not in the ECA&#39;s state space&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;lattice index out of range&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">pin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pin</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;cannot provide both the index and pin arguments&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">values</span> <span class="o">!=</span> <span class="p">{}:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;cannot provide both the index and values arguments&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pin</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot set a value for a pinned state&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid state in values argument&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unsafe_update</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ECA.neighbors_in"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.neighbors_in">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the set of all incoming neighbor nodes.</span>
+
+<span class="sd">        In the cases of the lattices having fixed boundary conditions, the</span>
+<span class="sd">        left boundary, being on the left of the leftmost index 0, has an index</span>
+<span class="sd">        of -1, while the right boundary&#39;s index is the size+1. The full state</span>
+<span class="sd">        of the lattices and the boundaries is equavolent to: `[cell0, cell1,</span>
+<span class="sd">        ..., cellN, right_boundary, left_boundary]` if it is ever presented as</span>
+<span class="sd">        a single list in Python.</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :param size: size of ECA</span>
+<span class="sd">        :returns: the set of all node indices which point toward the index node</span>
+<span class="sd">        :raises ValueError: if `index &lt; 0 or index &gt; n - 1`</span>
+
+<span class="sd">        .. rubric:: Basic Use:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; net = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_in(1, size=3)</span>
+<span class="sd">            {0, 1, 2}</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_in(2, size=3)</span>
+<span class="sd">            {0, 1, 2}</span>
+<span class="sd">            &gt;&gt;&gt; net.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_in(2, size=3)</span>
+<span class="sd">            {1, 2, 3}</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_in(0, 3)</span>
+<span class="sd">            {0, 1, -1}</span>
+
+<span class="sd">        .. rubric:: Erroneous Usage:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; net = ECA(30,boundary=(1, 1))</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_in(5, 3)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: index must be a non-negative integer less than size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;size must be a positive integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;size must be a positive integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;index must be a non-negative integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;index must be a non-negative integer less than size&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">right</span> <span class="o">&gt;</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">left</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">right</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="ECA.neighbors_out"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.neighbors_out">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the set of all outgoing neighbor nodes.</span>
+
+<span class="sd">        Fixed boundaries are excluded as they are not affected by internal</span>
+<span class="sd">        states.</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :param size: size of ECA</span>
+<span class="sd">        :returns: the set of all node indices which point from the index node</span>
+<span class="sd">        :raises ValueError: if `index &lt; 0 or index &gt; n - 1`</span>
+
+<span class="sd">        .. rubric:: Basic Use:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; net = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_out(1, 3)</span>
+<span class="sd">            {0, 1, 2}</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_out(2, 3)</span>
+<span class="sd">            {0, 1, 2}</span>
+<span class="sd">            &gt;&gt;&gt; net.boundary = (1, 1)</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_out(2, 3)</span>
+<span class="sd">            {1, 2}</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_out(0, 3)</span>
+<span class="sd">            {0, 1}</span>
+
+<span class="sd">        .. rubric:: Erroneous Usage:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; net = ECA(30,boundary=(1, 1))</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors_out(5, 3)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: index must be a non-negative integer less than size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;index must be a non-negative integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;size must be a positive integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;size must be a positive integer&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;index must be a non-negative integer less than size&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">right</span> <span class="o">&gt;</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">left</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">right</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="ECA.neighbors"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.neighbors">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a set of neighbors for a specified node.</span>
+
+<span class="sd">        In the cases of the lattices having fixed boundary conditions, the</span>
+<span class="sd">        left boundary, being on the left of the leftmost index 0, has an index</span>
+<span class="sd">        of -1, while the right boundary&#39;s index is the size+1. The full state</span>
+<span class="sd">        of the lattices and the boundaries is equavolent to: `[cell0, cell1,</span>
+<span class="sd">        ..., cellN, right_boundary, left_boundary]` if it is ever presented as</span>
+<span class="sd">        a single list in Python.</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :param size: size of ECA</span>
+<span class="sd">        :returns: the set of all node indices adjacent to the index node</span>
+<span class="sd">        :raises ValueError: if `index &lt; 0 or index &gt; n - 1`</span>
+
+<span class="sd">        .. rubric:: Basic Use:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; net = ECA(30)</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors(1, size=3)</span>
+<span class="sd">            {0, 1, 2}</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors(2, size=3)</span>
+<span class="sd">            {0, 1, 2}</span>
+<span class="sd">            &gt;&gt;&gt; net.boundary = (1,1)</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors(2, size=3)</span>
+<span class="sd">            {1, 2, 3}</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors(0, 3)</span>
+<span class="sd">            {0, 1, -1}</span>
+
+<span class="sd">        .. rubric:: Erroneous Usage:</span>
+
+<span class="sd">        .. doctest:: automata</span>
+
+<span class="sd">            &gt;&gt;&gt; net = ECA(30,boundary=(1, 1))</span>
+<span class="sd">            &gt;&gt;&gt; net.neighbors(5, 3)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: index must be a non-negative integer less than size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Outgoing neighbors are a subset of incoming neighbors.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ECA.to_networkx_graph"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.to_networkx_graph">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return networkx graph given neet network. Requires networkx.</span>
+
+<span class="sd">        :param size: size of ECA, required if network is an ECA</span>
+<span class="sd">        :returns: a ``networkx.DiGraph``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+                <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+                          <span class="n">boundary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">boundary</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ECA.draw"><a class="viewcode-back" href="../../../automata.html#neet.automata.eca.ECA.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Output a file with a simple network drawing.</span>
+
+<span class="sd">        Requires networkx and pygraphviz.</span>
+
+<span class="sd">        Supported image formats are determined by graphviz.  In particular,</span>
+<span class="sd">        pdf support requires &#39;cairo&#39; and &#39;pango&#39; to be installed prior to</span>
+<span class="sd">        graphviz installation.</span>
+
+<span class="sd">        :param filename: filename to write drawing to. Temporary filename will</span>
+<span class="sd">                         be used if no filename provided.</span>
+<span class="sd">        :param size: size of ECA, required if network is an ECA</span>
+<span class="sd">        :returns: a ``pygraphviz`` network drawing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">nx_agraph</span><span class="o">.</span><span class="n">view_pygraphviz</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">to_networkx_graph</span><span class="p">(</span><span class="n">size</span><span class="p">),</span> <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;circo&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

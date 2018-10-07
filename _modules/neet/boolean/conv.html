@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neet.boolean.conv &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>neet.boolean.conv</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for neet.boolean.conv</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. currentmodule:: neet.boolean.conv</span>
+
+<span class="sd">.. testsetup:: conv</span>
+
+<span class="sd">    from neet.boolean import LogicNetwork</span>
+<span class="sd">    from neet.boolean.conv import *</span>
+<span class="sd">    from neet.boolean.examples import s_pombe</span>
+<span class="sd">    from neet.synchronous import transitions</span>
+
+<span class="sd">Network Type Conversion</span>
+<span class="sd">=======================</span>
+
+<span class="sd">Some algorithms are more efficiently implemented on particular network type.</span>
+<span class="sd">This module allows the user to convert between network types, though not all</span>
+<span class="sd">conversions are possible. For example, not every</span>
+<span class="sd">:class:`neet.boolean.LogicNetwork` can be converted to a</span>
+<span class="sd">:class:`neet.boolean.WTNetwork`, though the reverse direction is always</span>
+<span class="sd">possible.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.logicnetwork</span> <span class="k">import</span> <span class="n">LogicNetwork</span>
+<span class="kn">from</span> <span class="nn">.wtnetwork</span> <span class="k">import</span> <span class="n">WTNetwork</span>
+
+
+<div class="viewcode-block" id="wt_to_logic"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.conv.wt_to_logic">[docs]</a><span class="k">def</span> <span class="nf">wt_to_logic</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a :class:`neet.boolean.WTNetwork` to a</span>
+<span class="sd">    :class:`neet.boolean.LogicNetwork`.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: conv</span>
+
+<span class="sd">        &gt;&gt;&gt; s_pombe_logical = wt_to_logic(s_pombe)</span>
+<span class="sd">        &gt;&gt;&gt; isinstance(s_pombe_logical, LogicNetwork)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; transitions(s_pombe_logical) == transitions(s_pombe)</span>
+<span class="sd">        True</span>
+
+<span class="sd">    :param net: a network to convert</span>
+<span class="sd">    :type net: :class:`neet.boolean.WTNetwork`</span>
+<span class="sd">    :return: an equivalent :class:`neet.boolean.LogicNetwork`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">WTNetwork</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;net&#39; must be a WTNetwork&quot;</span><span class="p">)</span>
+
+    <span class="n">truth_table</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">weights</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">weights</span><span class="p">):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+                         <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">==</span> <span class="n">node</span><span class="p">])</span>
+
+        <span class="n">conditions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">dec_state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
+            <span class="n">bin_state</span> <span class="o">=</span> <span class="s1">&#39;{0:0</span><span class="si">{1}</span><span class="s1">b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dec_state</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
+            <span class="n">prod</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">bin_state</span><span class="p">)])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">prod</span> <span class="o">&gt;</span> <span class="n">net</span><span class="o">.</span><span class="n">thresholds</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="ow">or</span>
+                    <span class="p">(</span><span class="n">prod</span> <span class="o">==</span> <span class="n">net</span><span class="o">.</span><span class="n">thresholds</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="ow">and</span>
+                        <span class="n">bin_state</span><span class="p">[</span><span class="n">indices</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">node</span><span class="p">)]</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">)):</span>
+                <span class="n">conditions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bin_state</span><span class="p">)</span>
+
+        <span class="n">truth_table</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">indices</span><span class="p">,</span> <span class="n">conditions</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">LogicNetwork</span><span class="p">(</span><span class="n">truth_table</span><span class="p">,</span> <span class="n">net</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">reduced</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

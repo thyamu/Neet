@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neet.sensitivity &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>neet.sensitivity</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for neet.sensitivity</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. currentmodule:: neet.sensitivity</span>
+
+<span class="sd">.. testsetup:: sensitivity</span>
+
+<span class="sd">    from neet.boolean.examples import c_elegans, s_pombe</span>
+<span class="sd">    from neet.sensitivity import *</span>
+
+<span class="sd">Sensitivity</span>
+<span class="sd">===========</span>
+
+<span class="sd">The :mod:`neet.sensitivity` module provides a collection of functions for</span>
+<span class="sd">computing measures of sensitivity of networks, i.e. the degree to which</span>
+<span class="sd">perturbations of the network state propogate and spread. This module also</span>
+<span class="sd">provides a collection of functions for identifying &quot;canalizing edges&quot;: edges</span>
+<span class="sd">for which a state of the source node uniquely determines the state of the</span>
+<span class="sd">target regardless of other sources.</span>
+
+<span class="sd">API Documentation</span>
+<span class="sd">-----------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.interfaces</span> <span class="k">import</span> <span class="n">is_boolean_network</span>
+<span class="kn">from</span> <span class="nn">.synchronous</span> <span class="k">import</span> <span class="n">transitions</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="k">as</span> <span class="nn">linalg</span>
+
+
+<div class="viewcode-block" id="sensitivity"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.sensitivity">[docs]</a><span class="k">def</span> <span class="nf">sensitivity</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">transitions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Boolean network sensitivity, as defined in [Shmulevich2004]_</span>
+
+<span class="sd">    The sensitivity of a Boolean function :math:`f` on state vector :math:`x`</span>
+<span class="sd">    is the number of Hamming neighbors of :math:`x` on which the function</span>
+<span class="sd">    value is different than on :math:`x`.</span>
+
+<span class="sd">    This calculates the average sensitivity over all :math:`N` boolean</span>
+<span class="sd">    functions, where :math:`N` is the size of net.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; sensitivity(s_pombe, [0, 0, 0, 0, 0, 1, 1, 0, 0])</span>
+<span class="sd">        1.0</span>
+<span class="sd">        &gt;&gt;&gt; sensitivity(s_pombe, [0, 1, 1, 0, 1, 0, 0, 1, 0])</span>
+<span class="sd">        0.4444444444444444</span>
+<span class="sd">        &gt;&gt;&gt; sensitivity(c_elegans, [0, 0, 0, 0, 0, 0, 0, 0])</span>
+<span class="sd">        1.75</span>
+<span class="sd">        &gt;&gt;&gt; sensitivity(c_elegans, [1, 1, 1, 1, 1, 1, 1, 1])</span>
+<span class="sd">        1.25</span>
+
+<span class="sd">    :param net: :mod:`neet` boolean network</span>
+<span class="sd">    :param state: a single network state, represented as a list of node states</span>
+<span class="sd">    :param transitions: a list of precomputed state transitions (*optional*)</span>
+<span class="sd">    :type transitions: list or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_boolean_network</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;net must be a boolean network&quot;</span><span class="p">))</span>
+
+    <span class="c1"># list Hamming neighbors</span>
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="n">_hamming_neighbors</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="n">nextState</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="c1"># count sum of differences found in neighbors of the original</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">transitions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">newState</span> <span class="o">=</span> <span class="n">transitions</span><span class="p">[</span><span class="n">_fast_encode</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newState</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">_unsafe_update</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">_boolean_distance</span><span class="p">(</span><span class="n">newState</span><span class="p">,</span> <span class="n">nextState</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">s</span> <span class="o">/</span> <span class="n">net</span><span class="o">.</span><span class="n">size</span></div>
+
+
+<div class="viewcode-block" id="difference_matrix"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.difference_matrix">[docs]</a><span class="k">def</span> <span class="nf">difference_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">transitions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns matrix answering the question: Starting at the given state, does</span>
+<span class="sd">    flipping the state of node ``j`` change the state of node ``i``?</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; difference_matrix(s_pombe, [0, 0, 0, 0, 0, 0, 0, 0, 0])</span>
+<span class="sd">        array([[0., 0., 0., 0., 0., 0., 0., 0., 0.],</span>
+<span class="sd">               [0., 0., 1., 1., 1., 0., 0., 0., 0.],</span>
+<span class="sd">               [0., 0., 1., 0., 0., 0., 0., 0., 1.],</span>
+<span class="sd">               [0., 0., 0., 1., 0., 0., 0., 0., 1.],</span>
+<span class="sd">               [0., 0., 0., 0., 0., 1., 0., 0., 0.],</span>
+<span class="sd">               [0., 0., 0., 0., 0., 0., 0., 1., 0.],</span>
+<span class="sd">               [0., 0., 0., 0., 0., 0., 1., 0., 1.],</span>
+<span class="sd">               [0., 1., 0., 0., 0., 0., 0., 1., 0.],</span>
+<span class="sd">               [0., 0., 0., 0., 1., 0., 0., 0., 0.]])</span>
+<span class="sd">        &gt;&gt;&gt; difference_matrix(c_elegans, [0, 0, 0, 0, 0, 0, 0, 0])</span>
+<span class="sd">        array([[1., 0., 0., 0., 0., 0., 0., 1.],</span>
+<span class="sd">               [0., 0., 1., 1., 0., 0., 0., 0.],</span>
+<span class="sd">               [0., 0., 1., 0., 1., 0., 0., 0.],</span>
+<span class="sd">               [0., 0., 1., 0., 0., 0., 0., 0.],</span>
+<span class="sd">               [0., 0., 0., 0., 1., 1., 0., 1.],</span>
+<span class="sd">               [0., 0., 0., 0., 0., 1., 1., 0.],</span>
+<span class="sd">               [1., 0., 0., 0., 0., 0., 0., 0.],</span>
+<span class="sd">               [0., 0., 0., 0., 0., 0., 0., 1.]])</span>
+
+<span class="sd">    :param net: a :mod:`neet` boolean network</span>
+<span class="sd">    :param state: the starting state</span>
+<span class="sd">    :param transitions: a precomputed list of state transitions (*optional*)</span>
+<span class="sd">    :type transitions: list or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set up empty matrix</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+
+    <span class="c1"># list Hamming neighbors (in order!)</span>
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="n">_hamming_neighbors</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="n">nextState</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="c1"># count differences found in neighbors of the original</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">neighbors</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">transitions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">newState</span> <span class="o">=</span> <span class="n">transitions</span><span class="p">[</span><span class="n">_fast_encode</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newState</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">_unsafe_update</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+        <span class="n">Q</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">nextState</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">newState</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">%</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">Q</span></div>
+
+
+<span class="k">def</span> <span class="nf">_states_limited</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    All possible states that vary only nodes with given indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">state</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="n">stateFlipped</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">stateFlipped</span><span class="p">[</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">stateFlipped</span><span class="p">[</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
+
+        <span class="n">left_rec</span> <span class="o">=</span> <span class="n">_states_limited</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">state</span><span class="p">)</span>
+        <span class="n">right_rec</span> <span class="o">=</span> <span class="n">_states_limited</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stateFlipped</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">left_rec</span> <span class="o">+</span> <span class="n">right_rec</span>
+
+
+<div class="viewcode-block" id="average_difference_matrix"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.average_difference_matrix">[docs]</a><span class="k">def</span> <span class="nf">average_difference_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">calc_trans</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Averaged over states, what is the probability</span>
+<span class="sd">    that node i&#39;s state is changed by a single bit flip of node j?</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; average_difference_matrix(s_pombe)</span>
+<span class="sd">        array([[0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    ,</span>
+<span class="sd">                0.    ],</span>
+<span class="sd">               [0.    , 0.    , 0.25  , 0.25  , 0.25  , 0.    , 0.    , 0.    ,</span>
+<span class="sd">                0.    ],</span>
+<span class="sd">               [0.25  , 0.25  , 0.25  , 0.    , 0.    , 0.25  , 0.    , 0.    ,</span>
+<span class="sd">                0.25  ],</span>
+<span class="sd">               [0.25  , 0.25  , 0.    , 0.25  , 0.    , 0.25  , 0.    , 0.    ,</span>
+<span class="sd">                0.25  ],</span>
+<span class="sd">               [0.    , 0.    , 0.    , 0.    , 0.    , 1.    , 0.    , 0.    ,</span>
+<span class="sd">                0.    ],</span>
+<span class="sd">               [0.    , 0.    , 0.0625, 0.0625, 0.0625, 0.    , 0.0625, 0.0625,</span>
+<span class="sd">                0.    ],</span>
+<span class="sd">               [0.    , 0.5   , 0.    , 0.    , 0.    , 0.    , 0.5   , 0.    ,</span>
+<span class="sd">                0.5   ],</span>
+<span class="sd">               [0.    , 0.5   , 0.    , 0.    , 0.    , 0.    , 0.    , 0.5   ,</span>
+<span class="sd">                0.5   ],</span>
+<span class="sd">               [0.    , 0.    , 0.    , 0.    , 1.    , 0.    , 0.    , 0.    ,</span>
+<span class="sd">                0.    ]])</span>
+<span class="sd">        &gt;&gt;&gt; average_difference_matrix(c_elegans)</span>
+<span class="sd">        array([[0.25  , 0.25  , 0.    , 0.    , 0.    , 0.25  , 0.25  , 0.25  ],</span>
+<span class="sd">               [0.    , 0.    , 0.5   , 0.5   , 0.    , 0.    , 0.    , 0.    ],</span>
+<span class="sd">               [0.5   , 0.    , 0.5   , 0.    , 0.5   , 0.    , 0.    , 0.    ],</span>
+<span class="sd">               [0.    , 0.    , 1.    , 0.    , 0.    , 0.    , 0.    , 0.    ],</span>
+<span class="sd">               [0.    , 0.3125, 0.3125, 0.3125, 0.3125, 0.3125, 0.    , 0.3125],</span>
+<span class="sd">               [0.5   , 0.    , 0.    , 0.    , 0.    , 0.5   , 0.5   , 0.    ],</span>
+<span class="sd">               [1.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    ],</span>
+<span class="sd">               [0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.5   , 0.5   ]])</span>
+
+<span class="sd">    :param states: If None, average over all possible states. Otherwise,</span>
+<span class="sd">                   providing a list of states will calculate the average over</span>
+<span class="sd">                   only those states.</span>
+<span class="sd">    :type states: list or None</span>
+<span class="sd">    :param calc_trans: Optionally pre-calculate all transitions. Only used</span>
+<span class="sd">                        when states or weights argument is not None.</span>
+<span class="sd">    :type calc_trans: bool</span>
+<span class="sd">    :return: boolean ``numpy`` array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">states</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># explicitly calculate difference matrix for each state</span>
+
+        <span class="c1"># optionally pre-calculate transitions</span>
+        <span class="k">if</span> <span class="n">calc_trans</span><span class="p">:</span>
+            <span class="n">trans</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">transitions</span><span class="p">(</span><span class="n">net</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trans</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># currently changes state generators to lists.</span>
+        <span class="c1"># is there a way to avoid this?</span>
+        <span class="k">if</span> <span class="n">states</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">state_space</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">),):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Weights must be a 1D array with length same as states&quot;</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">states</span><span class="p">):</span>
+            <span class="n">Q</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">difference_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">trans</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># make use of sparse connectivity to be more efficient</span>
+        <span class="n">state0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+            <span class="n">nodesInfluencingI</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">jindex</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nodesInfluencingI</span><span class="p">):</span>
+
+                <span class="c1"># for each state of other nodes, does j matter?</span>
+                <span class="n">otherNodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">nodesInfluencingI</span><span class="p">))</span>
+                <span class="n">otherNodes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">jindex</span><span class="p">)</span>
+                <span class="n">otherNodeStates</span> <span class="o">=</span> <span class="n">_states_limited</span><span class="p">(</span><span class="n">otherNodes</span><span class="p">,</span> <span class="n">state0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">otherNodeStates</span><span class="p">:</span>
+                    <span class="c1"># might be able to do faster by calculating transitions</span>
+                    <span class="c1"># once for each i also we only need the update for node i</span>
+
+                    <span class="c1"># start with two states, one with j on and one with j off</span>
+                    <span class="n">jOff</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                    <span class="n">jOff</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">jOffNext</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">_unsafe_update</span><span class="p">(</span><span class="n">jOff</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">jOn</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                    <span class="n">jOn</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">jOnNext</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">_unsafe_update</span><span class="p">(</span><span class="n">jOn</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="c1"># are the results different?</span>
+                    <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">jOffNext</span> <span class="o">+</span> <span class="n">jOnNext</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
+                <span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">/=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">otherNodeStates</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">Q</span></div>
+
+
+<div class="viewcode-block" id="is_canalizing"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.is_canalizing">[docs]</a><span class="k">def</span> <span class="nf">is_canalizing</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">node_i</span><span class="p">,</span> <span class="n">neighbor_j</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether a given network edge is canalizing: if ``node_i``&#39;s</span>
+<span class="sd">    value at :math:`t+1` is fully determined when ``neighbor_j``&#39;s value has</span>
+<span class="sd">    a particular value at :math:`t`, regardless of the values of other nodes,</span>
+<span class="sd">    then there is a canalizing edge from ``neighbor_j`` to node_i.</span>
+
+<span class="sd">    According to (Stauffer 1987), &quot;A rule ... is called forcing, or</span>
+<span class="sd">    canalizing, if at least one of its :math:`K` arguments has the property</span>
+<span class="sd">    that the result of the function is already fixed if this argument has</span>
+<span class="sd">    one particular value, regardless of the values for the :math:`K-1` other</span>
+<span class="sd">    arguments.&quot;  Note that this is a definition for whether a node&#39;s rule is</span>
+<span class="sd">    canalizing, whereas this function calculates whether a specific edge is</span>
+<span class="sd">    canalizing.  Under this definition, if a node has any incoming canalizing</span>
+<span class="sd">    edges, then its rule is canalizing.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; is_canalizing(s_pombe, 1, 2)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_canalizing(s_pombe, 2, 1)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_canalizing(c_elegans, 7, 7)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_canalizing(c_elegans, 1, 3)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_canalizing(c_elegans, 4, 3)</span>
+<span class="sd">        False</span>
+
+<span class="sd">    :param net: a :mod:`neet` boolean network</span>
+<span class="sd">    :param node_i: target node index</span>
+<span class="sd">    :param neighbor_j: source node index</span>
+<span class="sd">    :return: ``True`` if the edge ``(neighbor_j, node_i)`` is canalizing, or</span>
+<span class="sd">             ``None`` if the edge does not exist</span>
+
+<span class="sd">    .. seealso:: :func:`canalizing_edges`</span>
+<span class="sd">    .. seealso:: :func:`canalizing_nodes`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nodesInfluencingI</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">node_i</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">neighbor_j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nodesInfluencingI</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">node_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">)):</span>
+        <span class="c1"># can&#39;t be canalizing if j has no influence on i</span>
+        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># or False?</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">jindex</span> <span class="o">=</span> <span class="n">nodesInfluencingI</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">neighbor_j</span><span class="p">)</span>
+
+        <span class="c1"># for every state of other nodes, does j determine i?</span>
+        <span class="n">otherNodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">nodesInfluencingI</span><span class="p">))</span>
+        <span class="n">otherNodes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">jindex</span><span class="p">)</span>
+        <span class="n">otherNodeStates</span> <span class="o">=</span> <span class="n">_states_limited</span><span class="p">(</span>
+            <span class="n">otherNodes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
+
+        <span class="n">jOnForced</span><span class="p">,</span> <span class="n">jOffForced</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="n">jOnForcedValue</span><span class="p">,</span> <span class="n">jOffForcedValue</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">stateindex</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">jOnForced</span> <span class="ow">or</span> <span class="n">jOffForced</span><span class="p">)</span> <span class="ow">and</span> <span class="n">stateindex</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherNodeStates</span><span class="p">):</span>
+
+            <span class="n">state</span> <span class="o">=</span> <span class="n">otherNodeStates</span><span class="p">[</span><span class="n">stateindex</span><span class="p">]</span>
+
+            <span class="c1"># first hold j off</span>
+            <span class="k">if</span> <span class="n">jOffForced</span><span class="p">:</span>
+                <span class="n">jOff</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">jOff</span><span class="p">[</span><span class="n">neighbor_j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">jOffNext</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">jOff</span><span class="p">)[</span><span class="n">node_i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">jOffForcedValue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">jOffForcedValue</span> <span class="o">=</span> <span class="n">jOffNext</span>
+                <span class="k">elif</span> <span class="n">jOffForcedValue</span> <span class="o">!=</span> <span class="n">jOffNext</span><span class="p">:</span>
+                    <span class="c1"># then holding j off does not force i</span>
+                    <span class="n">jOffForced</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="c1"># now hold j on</span>
+            <span class="k">if</span> <span class="n">jOnForced</span><span class="p">:</span>
+                <span class="n">jOn</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">jOn</span><span class="p">[</span><span class="n">neighbor_j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">jOnNext</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">jOn</span><span class="p">)[</span><span class="n">node_i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">jOnForcedValue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">jOnForcedValue</span> <span class="o">=</span> <span class="n">jOnNext</span>
+                <span class="k">elif</span> <span class="n">jOnForcedValue</span> <span class="o">!=</span> <span class="n">jOnNext</span><span class="p">:</span>
+                    <span class="c1"># then holding j on does not force i</span>
+                    <span class="n">jOnForced</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">stateindex</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># if we have checked all states, then the edge must be forcing</span>
+        <span class="c1"># print &quot;jOnForced,jOffForced&quot;,jOnForced,jOffForced</span>
+        <span class="k">return</span> <span class="n">jOnForced</span> <span class="ow">or</span> <span class="n">jOffForced</span></div>
+
+
+<div class="viewcode-block" id="canalizing_edges"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.canalizing_edges">[docs]</a><span class="k">def</span> <span class="nf">canalizing_edges</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a set of tuples corresponding to the edges in the network that</span>
+<span class="sd">    are canalizing. Each tuple consists of two node indices, corresponding</span>
+<span class="sd">    to an edge from the second node to the first node (so that the second node</span>
+<span class="sd">    controls the first node in a canalizing manner).</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; canalizing_edges(s_pombe)</span>
+<span class="sd">        {(1, 2), (5, 4), (0, 0), (1, 3), (4, 5), (5, 6), (5, 7), (1, 4), (8, 4), (5, 2), (5, 3)}</span>
+<span class="sd">        &gt;&gt;&gt; canalizing_edges(c_elegans)</span>
+<span class="sd">        {(1, 2), (3, 2), (1, 3), (7, 6), (6, 0), (7, 7)}</span>
+
+<span class="sd">    :param net: a :mod:`neet` boolean network</span>
+<span class="sd">    :return: the set of canalizing edges as in the form ``(target, source)``</span>
+
+<span class="sd">    .. seealso:: :func:`is_canalizing`</span>
+<span class="sd">    .. seealso:: :func:`canalizing_nodes`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">canalizingList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">indexi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">neighborj</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">indexi</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">is_canalizing</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">indexi</span><span class="p">,</span> <span class="n">neighborj</span><span class="p">):</span>
+                <span class="n">canalizingList</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">indexi</span><span class="p">,</span> <span class="n">neighborj</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">canalizingList</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="canalizing_nodes"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.canalizing_nodes">[docs]</a><span class="k">def</span> <span class="nf">canalizing_nodes</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the nodes of the network which have at least one incoming canalizing</span>
+<span class="sd">    edge.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; canalizing_nodes(s_pombe)</span>
+<span class="sd">        {0, 1, 4, 5, 8}</span>
+<span class="sd">        &gt;&gt;&gt; canalizing_nodes(c_elegans)</span>
+<span class="sd">        {1, 3, 6, 7}</span>
+
+<span class="sd">    :param net: a :mod:`neet` boolean network</span>
+<span class="sd">    :return: the set indices of nodes with at least one canalizing input edge</span>
+
+<span class="sd">    .. seealso:: :func:`is_canalizing`</span>
+<span class="sd">    .. seealso:: :func:`canalizing_edges`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">canalizing_edges</span><span class="p">(</span><span class="n">net</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="lambdaQ"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.lambdaQ">[docs]</a><span class="k">def</span> <span class="nf">lambdaQ</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate sensitivity eigenvalue, the largest eigenvalue of the</span>
+<span class="sd">    sensitivity matrix :func:`average_difference_matrix`.</span>
+
+<span class="sd">    This is analogous to the eigenvalue calculated in [Pomerance2009]_.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; lambdaQ(s_pombe)</span>
+<span class="sd">        0.8265021276831896</span>
+<span class="sd">        &gt;&gt;&gt; lambdaQ(c_elegans)</span>
+<span class="sd">        1.263099227661824</span>
+
+<span class="sd">    :param net: a :mod:`neet` boolean network</span>
+<span class="sd">    :return: the sensitivity eigenvalue (:math:`\lambda_Q`) of ``net``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">average_difference_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">Q</span><span class="p">)))</span></div>
+
+
+<span class="k">def</span> <span class="nf">_fast_encode</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Quickly find encoding of a binary state.</span>
+
+<span class="sd">    Same result as ``net.state_space().encode(state)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">bit</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="n">bit</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span> <span class="nf">_boolean_distance</span><span class="p">(</span><span class="n">state1</span><span class="p">,</span> <span class="n">state2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Boolean distance between two states.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">state1</span><span class="p">)):</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="n">state1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">state2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span> <span class="nf">_hamming_neighbors</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return Hamming neighbors of a boolean state.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; _hamming_neighbors([0,0,1])</span>
+<span class="sd">        array([[1, 0, 1],</span>
+<span class="sd">               [0, 1, 1],</span>
+<span class="sd">               [0, 0, 0]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;state must be 1-dimensional&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">state</span> <span class="o">%</span> <span class="mi">2</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;state must be binary&quot;</span><span class="p">))</span>
+
+    <span class="n">repeat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="p">(</span><span class="n">repeat</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">state</span><span class="p">)))</span> <span class="o">%</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">neighbors</span>
+
+
+<div class="viewcode-block" id="average_sensitivity"><a class="viewcode-back" href="../../sensitivity.html#neet.sensitivity.average_sensitivity">[docs]</a><span class="k">def</span> <span class="nf">average_sensitivity</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">calc_trans</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate average Boolean network sensitivity, as defined in</span>
+<span class="sd">    [Shmulevich2004]_.</span>
+
+<span class="sd">    The sensitivity of a Boolean function :math:`f` on state vector :math:`x`</span>
+<span class="sd">    is the number of Hamming neighbors of :math:`x` on which the function</span>
+<span class="sd">    value is different than on :math:`x`.</span>
+
+<span class="sd">    The average sensitivity is an average taken over initial states.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    .. doctest:: sensitivity</span>
+
+<span class="sd">        &gt;&gt;&gt; average_sensitivity(c_elegans)</span>
+<span class="sd">        1.265625</span>
+<span class="sd">        &gt;&gt;&gt; average_sensitivity(c_elegans, states=[[0, 0, 0, 0, 0, 0, 0, 0],</span>
+<span class="sd">        ... [1, 1, 1, 1, 1, 1, 1, 1]])</span>
+<span class="sd">        ...</span>
+<span class="sd">        1.5</span>
+<span class="sd">        &gt;&gt;&gt; average_sensitivity(c_elegans, states=[[0, 0, 0, 0, 0, 0, 0, 0],</span>
+<span class="sd">        ... [1, 1, 1, 1, 1, 1, 1, 1]],weights=[0.9, 0.1])</span>
+<span class="sd">        ...</span>
+<span class="sd">        1.7</span>
+<span class="sd">        &gt;&gt;&gt; average_sensitivity(c_elegans, states=[[0, 0, 0, 0, 0, 0, 0, 0],</span>
+<span class="sd">        ... [1, 1, 1, 1, 1, 1, 1, 1]], weights=[9, 1])</span>
+<span class="sd">        ...</span>
+<span class="sd">        1.7</span>
+
+<span class="sd">    :param net: NEET boolean network</span>
+<span class="sd">    :param states: Optional list or generator of states. If None, all states</span>
+<span class="sd">                   are used.</span>
+<span class="sd">    :param weights: Optional list or generator of weights for each state.</span>
+<span class="sd">                    If None, each state is equally weighted. If states and</span>
+<span class="sd">                    weights are both None, an algorithm is used to efficiently</span>
+<span class="sd">                    make use of sparse connectivity.</span>
+<span class="sd">    :return: the average sensitivity of ``net``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_boolean_network</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;net must be a boolean network&quot;</span><span class="p">))</span>
+
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">average_difference_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+                                  <span class="n">calc_trans</span><span class="o">=</span><span class="n">calc_trans</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span> <span class="o">/</span> <span class="n">net</span><span class="o">.</span><span class="n">size</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

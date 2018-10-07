@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>State Space &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Interfaces" href="interfaces.html" />
+    <link rel="prev" title="Getting Started" href="getting-started.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">State Space</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>State Space</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/statespace.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-neet.statespace"></span><div class="section" id="state-space">
+<h1>State Space<a class="headerlink" href="#state-space" title="Permalink to this headline">¶</a></h1>
+<p>A fundamental property of networks is their state space. The
+<a class="reference internal" href="#neet.statespace.StateSpace" title="neet.statespace.StateSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateSpace</span></code></a> class provides a type for representing such a state
+space. It has anumber of convenient properties, in particular</p>
+<ol class="arabic simple">
+<li>it is iterable, <a class="reference internal" href="#neet.statespace.StateSpace.__iter__" title="neet.statespace.StateSpace.__iter__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StateSpace.__iter__()</span></code></a></li>
+<li>you can ask if it contains a particular state,
+<a class="reference internal" href="#neet.statespace.StateSpace.__contains__" title="neet.statespace.StateSpace.__contains__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StateSpace.__contains__()</span></code></a></li>
+<li>it can <a class="reference internal" href="#neet.statespace.StateSpace.encode" title="neet.statespace.StateSpace.encode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StateSpace.encode()</span></code></a> states as integers, and
+<a class="reference internal" href="#neet.statespace.StateSpace.decode" title="neet.statespace.StateSpace.decode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StateSpace.decode()</span></code></a> integers into states</li>
+</ol>
+<p>All of this together facilitates the clean implementation of many of the core
+functions of <code class="xref py py-mod docutils literal notranslate"><span class="pre">neet</span></code>.</p>
+<div class="section" id="api-documentation">
+<h2>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="neet.statespace.StateSpace">
+<em class="property">class </em><code class="descclassname">neet.statespace.</code><code class="descname">StateSpace</code><span class="sig-paren">(</span><em>spec</em>, <em>base=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/statespace.html#StateSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.statespace.StateSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#neet.statespace.StateSpace" title="neet.statespace.StateSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">StateSpace</span></code></a> represents the state space of a network model. It may be
+either uniform, i.e. all nodes have the same base, or non-uniform.</p>
+<dl class="method">
+<dt id="neet.statespace.StateSpace.__contains__">
+<code class="descname">__contains__</code><span class="sig-paren">(</span><em>states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/statespace.html#StateSpace.__contains__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.statespace.StateSpace.__contains__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if a state is in the state space</p>
+<p class="rubric">Examples:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">state_space</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">state_space</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">state_space</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">state_space</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">StateSpace</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">StateSpace</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="ow">in</span> <span class="n">StateSpace</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>states</strong> – the one-dimensional sequence of node states</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the <code class="docutils literal notranslate"><span class="pre">states</span></code> are valid</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.statespace.StateSpace.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>spec</em>, <em>base=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/statespace.html#StateSpace.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.statespace.StateSpace.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the state spec in accordance with the provided <code class="docutils literal notranslate"><span class="pre">spec</span></code>
+and base <code class="docutils literal notranslate"><span class="pre">base</span></code>.</p>
+<p class="rubric">Examples of Uniform State Spaces:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">is_uniform</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
+<span class="go">(True, 5, 2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">is_uniform</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
+<span class="go">(True, 3, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">is_uniform</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
+<span class="go">(True, 3, 2)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples of Non-Uniform State Spaces:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">is_uniform</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+<span class="go">(False, [2, 3, 4], 3)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>spec</strong> (<em>int</em><em> or </em><em>list</em>) – the number of nodes or an array of node bases</li>
+<li><strong>base</strong> – the base of the network nodes (ignored if <code class="docutils literal notranslate"><span class="pre">spec</span></code> is
+a list)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">spec</span></code> is neither an int nor a list of ints</li>
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">base</span></code> is neither <code class="docutils literal notranslate"><span class="pre">None</span></code> nor an int</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">base</span></code> is negative or zero</li>
+<li><strong>ValueError</strong> – if any element of <code class="docutils literal notranslate"><span class="pre">spec</span></code> is negative or zero</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">spec</span></code> is empty</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.statespace.StateSpace.__iter__">
+<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/statespace.html#StateSpace.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.statespace.StateSpace.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over the states in the state space</p>
+<p class="rubric">Examples of Boolean Spaces</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">StateSpace</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="go">[[0], [1]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">StateSpace</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">[[0, 0], [1, 0], [0, 1], [1, 1]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">StateSpace</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="go">[[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+</pre></div>
+</div>
+<p class="rubric">Examples of Non-Boolean Spaces</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">StateSpace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+<span class="go">[[0], [1], [2]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">StateSpace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<span class="go">[[0, 0], [1, 0], [2, 0], [3, 0], [0, 1], [1, 1], [2, 1], [3, 1], [0, 2], [1, 2], [2, 2], [3, 2], [0, 3], [1, 3], [2, 3], [3, 3]]</span>
+</pre></div>
+</div>
+<p class="rubric">Examples of Non-Uniform Spaces</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">StateSpace</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+<span class="go">[[0, 0, 0], [0, 1, 0], [0, 0, 1], [0, 1, 1], [0, 0, 2], [0, 1, 2]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">StateSpace</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]))</span>
+<span class="go">[[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [2, 2], [0, 3], [1, 3], [2, 3]]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body">each possible state in the state space</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.statespace.StateSpace.base">
+<code class="descname">base</code><a class="headerlink" href="#neet.statespace.StateSpace.base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the base of each direction of the state space.</p>
+<p>If the state space is not uniform, the result is a list of bases
+(one for each dimension). Otherwise, the result is an integer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of bases, one for each dimension</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.statespace.StateSpace.decode">
+<code class="descname">decode</code><span class="sig-paren">(</span><em>encoded</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/statespace.html#StateSpace.decode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.statespace.StateSpace.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decode an integer into a state in accordance with the state space.</p>
+<p class="rubric">Examples:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+<span class="go">[[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">volume</span><span class="p">)]</span>
+<span class="go">[[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+<span class="go">[[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">volume</span><span class="p">)]</span>
+<span class="go">[[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2]]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>encoded</strong> (<em>int</em>) – the encoded state</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the decoded state as a list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.statespace.StateSpace.encode">
+<code class="descname">encode</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/statespace.html#StateSpace.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.statespace.StateSpace.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode a state as an integer consistent with the state space. The
+encoding is such that, for example, the state [1, 0, 0] will
+correspond to 1; the state [1, 1, 0] will correspond to 3.</p>
+<p class="rubric">Examples:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="p">]</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7]</span>
+</pre></div>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">StateSpace</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="p">]</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>list</em>) – the state to encode</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a unique integer encoding of the state</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">state</span></code> has an incorrect length</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.statespace.StateSpace.is_uniform">
+<code class="descname">is_uniform</code><a class="headerlink" href="#neet.statespace.StateSpace.is_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get whether every direction in the state space has the same base.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.statespace.StateSpace.ndim">
+<code class="descname">ndim</code><a class="headerlink" href="#neet.statespace.StateSpace.ndim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dimensionality of the state space.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.statespace.StateSpace.volume">
+<code class="descname">volume</code><a class="headerlink" href="#neet.statespace.StateSpace.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the volume of the state space.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="interfaces.html" class="btn btn-neutral float-right" title="Interfaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="getting-started.html" class="btn btn-neutral" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

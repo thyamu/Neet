@@ -1,0 +1,939 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neet.boolean.wtnetwork &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>neet.boolean.wtnetwork</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for neet.boolean.wtnetwork</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. currentmodule:: neet.boolean.wtnetwork</span>
+
+<span class="sd">.. testsetup:: wtnetwork</span>
+
+<span class="sd">    from neet.boolean.examples import s_pombe</span>
+<span class="sd">    from neet.boolean.wtnetwork import WTNetwork</span>
+
+<span class="sd">Weight/Threshold Networks</span>
+<span class="sd">=========================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">neet.statespace</span> <span class="k">import</span> <span class="n">StateSpace</span>
+
+
+<div class="viewcode-block" id="WTNetwork"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork">[docs]</a><span class="k">class</span> <span class="nc">WTNetwork</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The WTNetwork class represents weight/threshold-based boolean networks. As</span>
+<span class="sd">    such it is specified in terms of a matrix of edge weights (rows are target</span>
+<span class="sd">    nodes) and a vector of node thresholds, and each node of the network is</span>
+<span class="sd">    expected to be in either of two states ``0`` or ``1``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WTNetwork.__init__"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a network from weights and thresholds.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork([[1,0],[1,1]])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            2</span>
+<span class="sd">            &gt;&gt;&gt; net.weights</span>
+<span class="sd">            array([[1., 0.],</span>
+<span class="sd">                   [1., 1.]])</span>
+<span class="sd">            &gt;&gt;&gt; net.thresholds</span>
+<span class="sd">            array([0., 0.])</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork([[1,0],[1,1]], [0.5,-0.5])</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            2</span>
+<span class="sd">            &gt;&gt;&gt; net.weights</span>
+<span class="sd">            array([[1., 0.],</span>
+<span class="sd">                   [1., 1.]])</span>
+<span class="sd">            &gt;&gt;&gt; net.thresholds</span>
+<span class="sd">            array([ 0.5, -0.5])</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork(3)</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            3</span>
+<span class="sd">            &gt;&gt;&gt; net.weights</span>
+<span class="sd">            array([[0., 0., 0.],</span>
+<span class="sd">                   [0., 0., 0.],</span>
+<span class="sd">                   [0., 0., 0.]])</span>
+<span class="sd">            &gt;&gt;&gt; net.thresholds</span>
+<span class="sd">            array([0., 0., 0.])</span>
+
+<span class="sd">        :param weights: the network weights, where: source/column -&gt; target/row</span>
+<span class="sd">        :param thresholds: the network thresholds</span>
+<span class="sd">        :param names: the names of the network nodes (optional)</span>
+<span class="sd">        :parma theta: the threshold function to use</span>
+<span class="sd">        :raises ValueError: if ``weights`` is empty</span>
+<span class="sd">        :raises ValueError: if ``weights`` is not a square matrix</span>
+<span class="sd">        :raises ValueError: if ``thresholds`` is not a vector</span>
+<span class="sd">        :raises ValueError: if ``weights`` and ``thresholds`` have different</span>
+<span class="sd">                            dimensions</span>
+<span class="sd">        :raises ValueError: if ``len(names)`` is not equal to the number of</span>
+<span class="sd">                            nodes</span>
+<span class="sd">        :raises TypeError: if ``threshold_func`` is not callable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">weights</span><span class="p">,</span> <span class="n">weights</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;weights must be a matrix&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;weights must be square&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">thresholds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
+
+        <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">split_threshold</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;theta must be a function&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;thresholds must be a vector&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;weights and thresholds have different dimensions&quot;</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid network size&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;either all or none of the nodes may have a name&quot;</span>
+            <span class="k">raise</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The number of nodes in the network.</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork(5)</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            5</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork(0)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: invalid network size</span>
+
+<span class="sd">        :type: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__size</span>
+
+<div class="viewcode-block" id="WTNetwork.state_space"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.state_space">[docs]</a>    <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a :class:`neet.statespace.StateSpace` object for the network.</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork(3)</span>
+<span class="sd">            &gt;&gt;&gt; net.state_space()</span>
+<span class="sd">            &lt;neet.statespace.StateSpace object at 0x...&gt;</span>
+<span class="sd">            &gt;&gt;&gt; space = net.state_space()</span>
+<span class="sd">            &gt;&gt;&gt; list(space)</span>
+<span class="sd">            [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]</span>
+
+<span class="sd">        :returns: the network&#39;s :class:`neet.statespace.StateSpace`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">StateSpace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_unsafe_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update ``states``, in place, according to the network update rules</span>
+<span class="sd">        without checking the validity of the arguments.</span>
+
+<span class="sd">        .. rubric:: Basic Use</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; s_pombe.size</span>
+<span class="sd">            9</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,0,0,1,0,0,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe._unsafe_update(xs)</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe._unsafe_update(xs)</span>
+<span class="sd">            [0, 1, 1, 1, 0, 0, 1, 0, 0]</span>
+
+<span class="sd">        .. rubric:: Single-Node Update</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,0,0,1,0,0,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update(xs, index=-1)</span>
+<span class="sd">            [0, 0, 0, 0, 1, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update(xs, index=2)</span>
+<span class="sd">            [0, 0, 1, 0, 1, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update(xs, index=3)</span>
+<span class="sd">            [0, 0, 1, 1, 1, 0, 0, 0, 1]</span>
+
+
+<span class="sd">        .. rubric:: State Pinning</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0,0,1,0,0,0,0], pin=[-1])</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 0, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0,0,0,0,0,0,1], pin=[1])</span>
+<span class="sd">            [0, 0, 1, 1, 0, 0, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0,0,0,0,0,0,1], pin=range(1,4))</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0,0,0,0,0,0,1], pin=[1,2,3,-1])</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 1, 0, 1]</span>
+
+<span class="sd">        .. rubric:: Value Fixing</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net.update([0,0,0,0,1,0,0,0,0], values={0:1, 2:1})</span>
+<span class="sd">            [1, 0, 1, 0, 0, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0,0,0,0,0,0,0,0,1], values={0:1, 1:0, 2:0})</span>
+<span class="sd">            [1, 0, 0, 1, 0, 0, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; net.update([0,0,0,0,0,0,0,0,1], values={-1:1, -2:1})</span>
+<span class="sd">            [0, 1, 1, 1, 0, 0, 1, 1, 1]</span>
+
+<span class="sd">        .. rubric:: Erroneous Usage</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0])</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: shapes (9,9) and (3,) not aligned: 9 (dim 1) != 3 (dim 0)</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0,0,2,0,0,0,0])</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0,0,1,0,0,0,0], 9)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            IndexError: index 9 is out of bounds for axis 0 with size 9</span>
+<span class="sd">            &gt;&gt;&gt; net._unsafe_update([0,0,0,0,0,0,0,0,1], pin=[10])</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            IndexError: index 10 is out of bounds for axis 1 with size 9</span>
+
+<span class="sd">        :param states: the one-dimensional sequence of node states</span>
+<span class="sd">        :param index: the index to update or None</span>
+<span class="sd">        :param pin: the indices to pin (fix to their current state) or None</span>
+<span class="sd">        :param values: a dictionary of index-value pairs to fix after update</span>
+<span class="sd">        :returns: the updated states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pin_states</span> <span class="o">=</span> <span class="n">pin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pin</span> <span class="o">!=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pin_states</span><span class="p">:</span>
+                <span class="n">pinned</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="p">)[</span><span class="n">pin</span><span class="p">]</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pin_states</span><span class="p">:</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pin</span><span class="p">):</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pinned</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">states</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresholds</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">states</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">states</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="n">states</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">states</span>
+
+<div class="viewcode-block" id="WTNetwork.update"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update ``states``, in place, according to the network update rules.</span>
+
+<span class="sd">        .. rubric:: Basic Use</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; s_pombe.size</span>
+<span class="sd">            9</span>
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,0,0,1,0,0,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update(xs)</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update(xs)</span>
+<span class="sd">            [0, 1, 1, 1, 0, 0, 1, 0, 0]</span>
+
+<span class="sd">        .. rubric:: Single-Node Update</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; xs = [0,0,0,0,1,0,0,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update(xs, index=-1)</span>
+<span class="sd">            [0, 0, 0, 0, 1, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update(xs, index=2)</span>
+<span class="sd">            [0, 0, 1, 0, 1, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update(xs, index=3)</span>
+<span class="sd">            [0, 0, 1, 1, 1, 0, 0, 0, 1]</span>
+
+<span class="sd">        .. rubric:: State Pinning</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], pin=[-1])</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 0, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,0,0,0,0,1], pin=[1])</span>
+<span class="sd">            [0, 0, 1, 1, 0, 0, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,0,0,0,0,1], pin=range(1,4))</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,0,0,0,0,1], pin=[1,2,3,-1])</span>
+<span class="sd">            [0, 0, 0, 0, 0, 0, 1, 0, 1]</span>
+
+<span class="sd">        .. rubric:: Value Fixing</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], values={0:1, 2:1})</span>
+<span class="sd">            [1, 0, 1, 0, 0, 0, 0, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,0,0,0,0,1], values={0:1, 1:0, 2:0})</span>
+<span class="sd">            [1, 0, 0, 1, 0, 0, 1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,0,0,0,0,1], values={-1:1, -2:1})</span>
+<span class="sd">            [0, 1, 1, 1, 0, 0, 1, 1, 1]</span>
+
+<span class="sd">        .. rubric:: Erroneous Usage</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0])</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: incorrect number of states in array</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,2,0,0,0,0])</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: invalid node state in states</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], 9)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            IndexError: index 9 is out of bounds for axis 0 with size 9</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], index=-1, pin=[-1])</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: cannot provide both the index and pin arguments</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], pin=[10])</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            IndexError: index 10 is out of bounds for axis 1 with size 9</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], index=1, values={1:0,3:0,2:1})</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: cannot provide both the index and values arguments</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], pin=[1], values={1:0,3:0,2:1})</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: cannot set a value for a pinned state</span>
+<span class="sd">            &gt;&gt;&gt; s_pombe.update([0,0,0,0,1,0,0,0,0], values={1:2})</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: invalid state in values argument</span>
+
+<span class="sd">        :param states: the one-dimensional sequence of node states</span>
+<span class="sd">        :param index: the index to update (or None)</span>
+<span class="sd">        :param pin: the indices to pin (or None)</span>
+<span class="sd">        :param values: a dictionary of index-value pairs to set after update</span>
+<span class="sd">        :returns: the updated states</span>
+<span class="sd">        :raises ValueError: if ``states`` is not in the network&#39;s state space</span>
+<span class="sd">        :raises ValueError: if ``index`` and ``pin`` are both provided</span>
+<span class="sd">        :raises ValueError: if ``index`` and ``values`` are both provided</span>
+<span class="sd">        :raises ValueError: if an element of ``pin`` is a key in ``values``</span>
+<span class="sd">        :raises ValueError: if a value in ``values`` is not binary (0 or 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">states</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;the provided state is not in the network&#39;s state space&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pin</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;cannot provide both the index and pin arguments&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">values</span> <span class="o">!=</span> <span class="p">{}:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;cannot provide both the index and values arguments&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pin</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot set a value for a pinned state&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid state in values argument&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unsafe_update</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WTNetwork.read"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.read">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">nodes_path</span><span class="p">,</span> <span class="n">edges_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a network from a pair of node/edge files.</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; nodes_path = &#39;../neet/boolean/data/s_pombe-nodes.txt&#39;</span>
+<span class="sd">            &gt;&gt;&gt; edges_path = &#39;../neet/boolean/data/s_pombe-edges.txt&#39;</span>
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork.read(nodes_path, edges_path)</span>
+<span class="sd">            &gt;&gt;&gt; net.size</span>
+<span class="sd">            9</span>
+<span class="sd">            &gt;&gt;&gt; net.names</span>
+<span class="sd">            [&#39;SK&#39;, &#39;Cdc2_Cdc13&#39;, &#39;Ste9&#39;, &#39;Rum1&#39;, &#39;Slp1&#39;, &#39;Cdc2_Cdc13_active&#39;, &#39;Wee1_Mik1&#39;, &#39;Cdc25&#39;, &#39;PP&#39;]</span>
+
+<span class="sd">        :param nodes_path: path to the nodes file</span>
+<span class="sd">        :type nodes_path: str</span>
+<span class="sd">        :param edges_path: path to the edges file</span>
+<span class="sd">        :type edges_path: str</span>
+<span class="sd">        :returns: a :class:`WTNetwork`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^\s*#.*$&#39;</span><span class="p">)</span>
+        <span class="n">names</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">nameindices</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span> <span class="mi">0</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">nodes_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">comment</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">nameindices</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span>
+                    <span class="n">thresholds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">threshold</span><span class="p">))</span>
+                    <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">edges_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">comment</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">weights</span><span class="p">[</span><span class="n">nameindices</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">nameindices</span><span class="p">[</span><span class="n">a</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">WTNetwork</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WTNetwork.split_threshold"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.split_threshold">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">split_threshold</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the following functional form to the arguments:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\theta_s(x,y) = \\begin{cases}</span>
+<span class="sd">                0 &amp; x &lt; 0 \\\\</span>
+<span class="sd">                y &amp; x = 0 \\\\</span>
+<span class="sd">                1 &amp; x &gt; 0.</span>
+<span class="sd">            \\end{cases}</span>
+
+<span class="sd">        If ``values`` and ``states`` are iterable, then apply the above</span>
+<span class="sd">        function to each pair ``(x,y) in zip(values, states)`` and stores</span>
+<span class="sd">        the result in ``states``.</span>
+
+<span class="sd">        If ``values`` and ``states`` are scalar values, then simply apply</span>
+<span class="sd">        the above threshold function to the pair ``(values, states)`` and</span>
+<span class="sd">        return the result.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; ys = [0,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.split_threshold([1, -1, 0], ys)</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ys</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ys = [1,1,1]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.split_threshold([1, -1, 0], ys)</span>
+<span class="sd">            [1, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; ys</span>
+<span class="sd">            [1, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.split_threshold(0,0)</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.split_threshold(0,1)</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.split_threshold(1,0)</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.split_threshold(1,1)</span>
+<span class="sd">            1</span>
+
+<span class="sd">        :param values: the threshold-shifted values of each node</span>
+<span class="sd">        :param states: the pre-updated states of the nodes</span>
+<span class="sd">        :returns: the updated states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">elif</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">states</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">values</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">values</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">states</span></div>
+
+<div class="viewcode-block" id="WTNetwork.negative_threshold"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.negative_threshold">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">negative_threshold</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the following functional form to the arguments:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\theta_n(x) = \\begin{cases}</span>
+<span class="sd">                0 &amp; x \\leq 0 \\\\</span>
+<span class="sd">                1 &amp; x &gt; 0.</span>
+<span class="sd">            \\end{cases}</span>
+
+<span class="sd">        If ``values`` and ``states`` are iterable, then apply the above</span>
+<span class="sd">        function to each pair ``(x,y) in zip(values, states)`` and stores</span>
+<span class="sd">        the result in ``states``.</span>
+
+<span class="sd">        If ``values`` and ``states`` are scalar values, then simply apply</span>
+<span class="sd">        the above threshold function to the pair ``(values, states)`` and</span>
+<span class="sd">        return the result.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; ys = [0,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.negative_threshold([1, -1, 0], ys)</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ys</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ys = [1,1,1]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.negative_threshold([1, -1, 0], ys)</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; ys</span>
+<span class="sd">            [1, 0, 0]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.negative_threshold(0,0)</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.negative_threshold(0,1)</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.negative_threshold(1,0)</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.negative_threshold(1,1)</span>
+<span class="sd">            1</span>
+
+<span class="sd">        :param values: the threshold-shifted values of each node</span>
+<span class="sd">        :param states: the pre-updated states of the nodes</span>
+<span class="sd">        :returns: the updated states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">states</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">values</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="WTNetwork.positive_threshold"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.positive_threshold">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">positive_threshold</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the following functional form to the arguments:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \\theta_p(x) = \\begin{cases}</span>
+<span class="sd">                0 &amp; x &lt; 0 \\\\</span>
+<span class="sd">                1 &amp; x \\geq 0.</span>
+<span class="sd">            \\end{cases}</span>
+
+<span class="sd">        If ``values`` and ``states`` are iterable, then apply the above</span>
+<span class="sd">        function to each pair ``(x,y) in zip(values, states)`` and stores</span>
+<span class="sd">        the result in ``states``.</span>
+
+<span class="sd">        If ``values`` and ``states`` are scalar values, then simply apply</span>
+<span class="sd">        the above threshold function to the pair ``(values, states)`` and</span>
+<span class="sd">        return the result.</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; ys = [0,0,0]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.positive_threshold([1, -1, 0], ys)</span>
+<span class="sd">            [1, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; ys</span>
+<span class="sd">            [1, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; ys = [1,1,1]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.positive_threshold([1, -1, 0], ys)</span>
+<span class="sd">            [1, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; ys</span>
+<span class="sd">            [1, 0, 1]</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.positive_threshold(0,0)</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.positive_threshold(0,1)</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.positive_threshold(1,0)</span>
+<span class="sd">            1</span>
+<span class="sd">            &gt;&gt;&gt; WTNetwork.positive_threshold(-1,0)</span>
+<span class="sd">            0</span>
+
+<span class="sd">        :param values: the threshold-shifted values of each node</span>
+<span class="sd">        :param states: the pre-updated states of the nodes</span>
+<span class="sd">        :returns: the updated states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">states</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">values</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="WTNetwork.neighbors_in"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.neighbors_in">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the set of all neighbor nodes, where edge(neighbor_node--&gt;index)</span>
+<span class="sd">        exists. An important consideration is that some threshold functions</span>
+<span class="sd">        can introduce implicit dependence between nodes, e.g.</span>
+<span class="sd">        :meth:`WTNetwork.split_threshold`.</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :returns: the set of all node indices which point toward the index node</span>
+
+<span class="sd">        .. rubric:: Examples</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork([[0,0,0],[1,0,1],[0,1,0]],</span>
+<span class="sd">            ... theta=WTNetwork.split_threshold)</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors_in(node) for node in range(net.size)]</span>
+<span class="sd">            [{0}, {0, 1, 2}, {1, 2}]</span>
+<span class="sd">            &gt;&gt;&gt; net.theta = WTNetwork.negative_threshold</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors_in(node) for node in range(net.size)]</span>
+<span class="sd">            [set(), {0, 2}, {1}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">negative_thresh</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">negative_threshold</span>
+        <span class="n">positive_thresh</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">positive_threshold</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="n">negative_thresh</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="n">positive_thresh</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">index</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Assume every other theta has self loops. This will be depreciated</span>
+            <span class="c1"># when we convert all WTNetworks to logicnetworks by default.</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">index</span><span class="p">]))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">([</span><span class="n">index</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="WTNetwork.neighbors_out"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.neighbors_out">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the set of all neighbor nodes, where</span>
+<span class="sd">        edge(index--&gt;neighbor_node) exists.</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :returns: the set of all node indices which the index node points to</span>
+
+<span class="sd">        .. rubric:: Basic Use</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork([[0,0,0],[1,0,1],[0,1,0]],</span>
+<span class="sd">            ... theta=WTNetwork.split_threshold)</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors_out(node) for node in range(net.size)]</span>
+<span class="sd">            [{0, 1}, {1, 2}, {1, 2}]</span>
+<span class="sd">            &gt;&gt;&gt; net.theta = WTNetwork.negative_threshold</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors_out(node) for node in range(net.size)]</span>
+<span class="sd">            [{1}, {2}, {1}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">negative_thresh</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">negative_threshold</span>
+        <span class="n">positive_thresh</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">positive_threshold</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="n">negative_thresh</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="n">positive_thresh</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Assume every other theta has self loops. This will be depreciated</span>
+            <span class="c1"># when we convert all WTNetworks to logicnetworks by default.</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">([</span><span class="n">index</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="WTNetwork.neighbors"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.neighbors">[docs]</a>    <span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a set of neighbors for a specified node, or a list of sets of</span>
+<span class="sd">        neighbors for all nodes in the network.</span>
+
+<span class="sd">        :param index: node index</span>
+<span class="sd">        :returns: a set (if index!=None) or list of sets of neighbors of a</span>
+<span class="sd">                  node or network or nodes</span>
+
+<span class="sd">        .. doctest:: wtnetwork</span>
+
+<span class="sd">            &gt;&gt;&gt; net = WTNetwork([[0,0,0],[1,0,1],[0,1,0]],</span>
+<span class="sd">            ... theta=WTNetwork.split_threshold)</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors(node) for node in range(net.size)]</span>
+<span class="sd">            [{0, 1}, {0, 1, 2}, {1, 2}]</span>
+<span class="sd">            &gt;&gt;&gt; net.theta = WTNetwork.negative_threshold</span>
+<span class="sd">            &gt;&gt;&gt; [net.neighbors(node) for node in range(net.size)]</span>
+<span class="sd">            [{1}, {0, 2}, {1}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WTNetwork.to_networkx_graph"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.to_networkx_graph">[docs]</a>    <span class="k">def</span> <span class="nf">to_networkx_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;indices&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return networkx graph given neet network.</span>
+<span class="sd">        Return a ``networkx`` graph from a :class:`WTNetwork`.</span>
+
+<span class="sd">        :param labels: how nodes are labeled and thus identified in networkx</span>
+<span class="sd">                       graph (``&#39;names&#39;`` or ``&#39;indices&#39;``)</span>
+<span class="sd">        :returns: a ``networkx.DiGraph``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">labels</span> <span class="o">==</span> <span class="s1">&#39;names&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;network nodes do not have names&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">labels</span> <span class="o">==</span> <span class="s1">&#39;indices&#39;</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;labels must be &#39;names&#39; or &#39;indices&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+                <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="WTNetwork.draw"><a class="viewcode-back" href="../../../boolean.html#neet.boolean.WTNetwork.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;indices&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Output a file with a simple network drawing.</span>
+
+<span class="sd">        Requires ``networkx`` and ``pygraphviz``.</span>
+
+<span class="sd">        Supported image formats are determined by ``graphviz``. In particular,</span>
+<span class="sd">        pdf support requires ``cairo`` and ``pango`` to be installed prior to</span>
+<span class="sd">        ``graphviz`` installation.</span>
+
+<span class="sd">        :param labels: how node is labeled and thus identified in networkx</span>
+<span class="sd">                       graph (&#39;names&#39; or &#39;indices&#39;), only used if network is</span>
+<span class="sd">                       a :class:`neet.boolean.LogicNetwork` or</span>
+<span class="sd">                       :class:`WTNetwork`</span>
+<span class="sd">        :param filename: filename to write drawing to. Temporary filename will</span>
+<span class="sd">                       be used if no filename provided.</span>
+<span class="sd">        :returns: a ``pygraphviz`` network drawing</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">nx_agraph</span><span class="o">.</span><span class="n">view_pygraphviz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_networkx_graph</span><span class="p">(</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">),</span> <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;circo&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

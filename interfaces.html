@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Interfaces &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cellular Automata" href="automata.html" />
+    <link rel="prev" title="State Space" href="statespace.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statespace.html">State Space</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#interface-testing">Interface Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interface-functions">Interface Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Interfaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/interfaces.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-neet.interfaces"></span><div class="section" id="interfaces">
+<h1>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-neet.interfaces" title="neet.interfaces: Interface-level functions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">neet.interfaces</span></code></a> module provides a collection of functions for
+determining if types adhere to various network interfaces, and generic
+functions for operating upon them. This done primarily through the
+<a class="reference internal" href="#neet.interfaces.is_network" title="neet.interfaces.is_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_network()</span></code></a>, <a class="reference internal" href="#neet.interfaces.is_fixed_sized" title="neet.interfaces.is_fixed_sized"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_fixed_sized()</span></code></a> and <a class="reference internal" href="#neet.interfaces.is_boolean_network" title="neet.interfaces.is_boolean_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_boolean_network()</span></code></a>
+functions.</p>
+<div class="section" id="api-documentation">
+<h2>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="interface-testing">
+<h3>Interface Testing<a class="headerlink" href="#interface-testing" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.interfaces.is_network">
+<code class="descclassname">neet.interfaces.</code><code class="descname">is_network</code><span class="sig-paren">(</span><em>thing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/interfaces.html#is_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.interfaces.is_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether an <em>object</em> or <em>type</em> meets the interface requirement of
+a network. Specifically, to be considered a network, a class must provide
+the following methods:</p>
+<ol class="arabic simple">
+<li><cite>update</cite> which updates the state of a lattice</li>
+<li><cite>state_space</cite> which returns a <a class="reference internal" href="statespace.html#neet.statespace.StateSpace" title="neet.statespace.StateSpace"><code class="xref py py-func docutils literal notranslate"><span class="pre">neet.statespace.StateSpace()</span></code></a> object</li>
+<li><cite>neighbors</cite> which returns the neighbors of a given node</li>
+</ol>
+<p class="rubric">Example:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">IsNetwork</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">pass</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">StateSpace</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="p">[]</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">IsNotNetwork</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_network</span><span class="p">(</span><span class="n">IsNetwork</span><span class="p">())</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_network</span><span class="p">(</span><span class="n">IsNetwork</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_network</span><span class="p">(</span><span class="n">IsNotNetwork</span><span class="p">())</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_network</span><span class="p">(</span><span class="n">IsNotNetwork</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_network</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thing</strong> – an object or a type</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">thing</span></code> has the minimum interface of a network</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.interfaces.is_fixed_sized">
+<code class="descclassname">neet.interfaces.</code><code class="descname">is_fixed_sized</code><span class="sig-paren">(</span><em>thing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/interfaces.html#is_fixed_sized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.interfaces.is_fixed_sized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether an <em>object</em> or <em>type</em> is a network and has a fixed size.</p>
+<p class="rubric">Example</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">IsNetwork</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">pass</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">StateSpace</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="p">[]</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">FixedSized</span><span class="p">(</span><span class="n">IsNetwork</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">size</span><span class="p">():</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="mi">5</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_fixed_sized</span><span class="p">(</span><span class="n">IsNetwork</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_fixed_sized</span><span class="p">(</span><span class="n">FixedSized</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thing</strong> – an object or a type</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">True</span></code> if <code class="docutils literal notranslate"><span class="pre">thing</span></code> is a network with a size attribute</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">See:</th><td class="field-body"><a class="reference internal" href="#neet.interfaces.is_network" title="neet.interfaces.is_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_network()</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.interfaces.is_boolean_network">
+<code class="descclassname">neet.interfaces.</code><code class="descname">is_boolean_network</code><span class="sig-paren">(</span><em>thing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/interfaces.html#is_boolean_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.interfaces.is_boolean_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether an <em>object</em> is a network with all Boolean states.d</p>
+</dd></dl>
+
+</div>
+<div class="section" id="interface-functions">
+<h3>Interface Functions<a class="headerlink" href="#interface-functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.interfaces.neighbors">
+<code class="descclassname">neet.interfaces.</code><code class="descname">neighbors</code><span class="sig-paren">(</span><em>net</em>, <em>index</em>, <em>direction='both'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/interfaces.html#neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.interfaces.neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a set of neighbors for a specified node, or a list of sets of
+neighbors for all nodes in the network.</p>
+<p>For ECAs, in the cases of the lattices having fixed boundary conditions,
+the left boundary, being on the left of the leftmost index 0, has an index
+of -1, while the right boundary’s index is the size+1. The full state of
+the lattices and the boundaries is equavolent to: <cite>[cell0, cell1, …,
+cellN, right_boundary, left_boundary]</cite> if it is ever presented as a single
+list in Python.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> – node index, if neighbors desired for one node only</li>
+<li><strong>direction</strong> – type of node neighbors to return (‘in’, ‘out’, or ‘both’)</li>
+<li><strong>size</strong> – size of ECA, required if network is an ECA</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a set of neighbors of a node</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neighbors</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
+<span class="go">{0, 1, 2}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">net</span><span class="o">.</span><span class="n">boundary</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neighbors</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
+<span class="go">{1, 2}</span>
+</pre></div>
+</div>
+<p>See <cite>ECA.neighbors()</cite>,`LogicNetwork.neighbors()` or <cite>WTNetwork.neighbors()</cite>
+docstrings for more details and basic use examples.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.interfaces.to_networkx_graph">
+<code class="descclassname">neet.interfaces.</code><code class="descname">to_networkx_graph</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em>, <em>labels='indices'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/interfaces.html#to_networkx_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.interfaces.to_networkx_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return networkx graph given neet network. Requires <cite>networkx</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>labels</strong> – how node is labeled and thus identified in networkx graph
+(‘names’ or ‘indices’), only used if <cite>net</cite> is a
+<cite>LogicNetwork</cite> or <cite>WTNetwork</cite></li>
+<li><strong>size</strong> – size of ECA, required if network is an ECA</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a networkx DiGraph</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="automata.html" class="btn btn-neutral float-right" title="Cellular Automata" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statespace.html" class="btn btn-neutral" title="State Space" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

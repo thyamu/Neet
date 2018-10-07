@@ -1,0 +1,893 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Synchronous Network Analysis &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sensitivity" href="sensitivity.html" />
+    <link rel="prev" title="Boolean Networks" href="boolean.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Synchronous Network Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#time-series-generation">Time Series Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#synchronous-landscape-analysis-functions">Synchronous Landscape Analysis Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attractor-landscape">Attractor Landscape</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Synchronous Network Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/synchronous.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-neet.synchronous"></span><div class="section" id="synchronous-network-analysis">
+<h1>Synchronous Network Analysis<a class="headerlink" href="#synchronous-network-analysis" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-neet.synchronous" title="neet.synchronous: Landscape analysis of synchronous networks"><code class="xref py py-mod docutils literal notranslate"><span class="pre">neet.synchronous</span></code></a> module provides a host of functions for computing
+properties of the dynamics of <em>synchronously</em> updated networks. This includes</p>
+<ul class="simple">
+<li><a class="reference internal" href="#neet.synchronous.trajectory" title="neet.synchronous.trajectory"><code class="xref py py-func docutils literal notranslate"><span class="pre">trajectory()</span></code></a></li>
+<li><a class="reference internal" href="#neet.synchronous.transitions" title="neet.synchronous.transitions"><code class="xref py py-func docutils literal notranslate"><span class="pre">transitions()</span></code></a></li>
+<li><a class="reference internal" href="#neet.synchronous.transition_graph" title="neet.synchronous.transition_graph"><code class="xref py py-func docutils literal notranslate"><span class="pre">transition_graph()</span></code></a></li>
+<li><a class="reference internal" href="#neet.synchronous.attractors" title="neet.synchronous.attractors"><code class="xref py py-func docutils literal notranslate"><span class="pre">attractors()</span></code></a></li>
+<li><a class="reference internal" href="#neet.synchronous.basins" title="neet.synchronous.basins"><code class="xref py py-func docutils literal notranslate"><span class="pre">basins()</span></code></a></li>
+<li><a class="reference internal" href="#neet.synchronous.basin_entropy" title="neet.synchronous.basin_entropy"><code class="xref py py-func docutils literal notranslate"><span class="pre">basin_entropy()</span></code></a></li>
+<li><a class="reference internal" href="#neet.synchronous.timeseries" title="neet.synchronous.timeseries"><code class="xref py py-func docutils literal notranslate"><span class="pre">timeseries()</span></code></a></li>
+</ul>
+<p>The disadvantage of these functions is that they cannot share any
+information. If you wish to compute a number of them, then many values will be
+repeatedly computed. For this reason, we created the <a class="reference internal" href="#neet.synchronous.Landscape" title="neet.synchronous.Landscape"><code class="xref py py-class docutils literal notranslate"><span class="pre">Landscape</span></code></a> class
+to simultaneously compute and several of these properties. This provides much
+better performance overall.</p>
+<div class="section" id="api-documentation">
+<h2>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="time-series-generation">
+<h3>Time Series Generation<a class="headerlink" href="#time-series-generation" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.synchronous.trajectory">
+<code class="descclassname">neet.synchronous.</code><code class="descname">trajectory</code><span class="sig-paren">(</span><em>net</em>, <em>state</em>, <em>timesteps=1</em>, <em>encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the trajectory of length <code class="docutils literal notranslate"><span class="pre">timesteps+1</span></code> through the state-space,
+as determined by the network rule, beginning at <code class="docutils literal notranslate"><span class="pre">state</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trajectory</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">[[0, 1, 0], [1, 1, 1], [0, 0, 0], [0, 0, 0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trajectory</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">[2, 7, 0, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trajectory</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">encode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">[16, 256, 78, 128]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network</li>
+<li><strong>state</strong> – the network state</li>
+<li><strong>timesteps</strong> – the number of steps in the trajectory</li>
+<li><strong>encode</strong> – encode the states as integers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the trajectory as a list</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if net is not a network</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">timesteps</span> <span class="pre">&lt;</span> <span class="pre">1</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.synchronous.transitions">
+<code class="descclassname">neet.synchronous.</code><code class="descname">transitions</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em>, <em>encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#transitions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.transitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the one-step state transitions for a network over its state space.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">transitions</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">[[0, 0, 0], [1, 1, 1], [1, 1, 1], [1, 0, 0], [1, 1, 1], [0, 0, 1], [0, 1, 0], [0, 0, 0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transitions</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">[0, 7, 7, 1, 7, 4, 2, 0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">transitions</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="go">512</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network</li>
+<li><strong>size</strong> – the size of the network (<code class="docutils literal notranslate"><span class="pre">None</span></code> if fixed sized)</li>
+<li><strong>encode</strong> – encode the states as integers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the one-state transitions as an array</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not a network</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.synchronous.timeseries">
+<code class="descclassname">neet.synchronous.</code><code class="descname">timeseries</code><span class="sig-paren">(</span><em>net</em>, <em>timesteps</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.timeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the timeseries for the network. The result will be a <span class="math notranslate nohighlight">\(3D\)</span>
+array with shape <span class="math notranslate nohighlight">\(N \times V \times t\)</span> where <span class="math notranslate nohighlight">\(N\)</span> is the
+number of nodes in the network, <span class="math notranslate nohighlight">\(V\)</span> is the volume of the state space
+(total number of network states), and <span class="math notranslate nohighlight">\(t\)</span> is <code class="docutils literal notranslate"><span class="pre">timesteps</span> <span class="pre">+</span> <span class="pre">1</span></code>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">WTNetwork</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timeseries</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">array([[[0, 0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 1, 1, 1, 1, 1],</span>
+<span class="go">        [0, 0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 1, 1, 1, 1, 1]],</span>
+
+<span class="go">       [[0, 0, 0, 0, 0, 0],</span>
+<span class="go">        [0, 1, 1, 1, 1, 1],</span>
+<span class="go">        [1, 1, 1, 1, 1, 1],</span>
+<span class="go">        [1, 1, 1, 1, 1, 1]]])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network</li>
+<li><strong>timesteps</strong> – the number of timesteps in the timeseries</li>
+<li><strong>size</strong> – the size of the network (<code class="docutils literal notranslate"><span class="pre">None</span></code> if fixed sized)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a numpy array</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not a network</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">timesteps</span> <span class="pre">&lt;</span> <span class="pre">1</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="synchronous-landscape-analysis-functions">
+<h3>Synchronous Landscape Analysis Functions<a class="headerlink" href="#synchronous-landscape-analysis-functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.synchronous.transition_graph">
+<code class="descclassname">neet.synchronous.</code><code class="descname">transition_graph</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#transition_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.transition_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the state transition graph for the network.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">transition_graph</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span>
+<span class="go">(512, 512)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">transition_graph</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(),</span> <span class="n">g</span><span class="o">.</span><span class="n">number_of_edges</span><span class="p">()</span>
+<span class="go">(64, 64)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network (if already a networkx.DiGraph, does nothing and
+returns it)</li>
+<li><strong>size</strong> – the size of the network (<code class="docutils literal notranslate"><span class="pre">None</span></code> if fixed sized)</li>
+<li><strong>encode</strong> – encode the states as integers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code> of the network’s transition graph</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not a network</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.synchronous.attractors">
+<code class="descclassname">neet.synchronous.</code><code class="descname">attractors</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#attractors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.attractors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the attractor states of a network. A generator of the attractors is
+returned with each attractor represented as a <code class="docutils literal notranslate"><span class="pre">list</span></code> of “encoded” states.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">attractors</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">[[76], [4], [8], [12], [144, 110, 384], [68], [72], [132], [136], [140], [196], [200], [204]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attractors</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">[[0], [14, 25, 7, 28, 19]]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network or the transition graph</li>
+<li><strong>size</strong> – the size of the network (<code class="docutils literal notranslate"><span class="pre">None</span></code> if fixed sized)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a list of attractor cycles</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not a network or a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is a transition graph and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not
+<code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.synchronous.basins">
+<code class="descclassname">neet.synchronous.</code><code class="descname">basins</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#basins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.basins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the attractor basins of a network. A generator of the attractor basins
+is returned with each basin represented as a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code> whose
+nodes are the “encoded” network states.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">basins</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">basin</span><span class="p">)</span> <span class="k">for</span> <span class="n">basin</span> <span class="ow">in</span> <span class="n">b</span><span class="p">]</span>
+<span class="go">[378, 2, 2, 2, 104, 6, 6, 2, 2, 2, 2, 2, 2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">basins</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">basin</span><span class="p">)</span> <span class="k">for</span> <span class="n">basin</span> <span class="ow">in</span> <span class="n">b</span><span class="p">]</span>
+<span class="go">[2, 30]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network or landscape transition_graph</li>
+<li><strong>size</strong> – the size of the network (<code class="docutils literal notranslate"><span class="pre">None</span></code> if fixed sized)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">generator of basin subgraphs</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not a network or a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is a transition graph and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not
+<code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.synchronous.basin_entropy">
+<code class="descclassname">neet.synchronous.</code><code class="descname">basin_entropy</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em>, <em>base=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#basin_entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.basin_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the basin entropy <a class="reference internal" href="zrefs.html#krawitz2007" id="id1">[Krawitz2007]</a>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">basin_entropy</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">1.221888833884975</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">basin_entropy</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">0.36782519036626105</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">basin_entropy</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">0.3372900666170139</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network or landscape transition_graph</li>
+<li><strong>size</strong> – the size of the network (<code class="docutils literal notranslate"><span class="pre">None</span></code> if fixed sized)</li>
+<li><strong>base</strong> – base of logarithm used to calculate entropy (2 for bits)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">value of basin entropy</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not a network or a <code class="docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is a transition graph and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not
+<code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="attractor-landscape">
+<h3>Attractor Landscape<a class="headerlink" href="#attractor-landscape" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="neet.synchronous.Landscape">
+<em class="property">class </em><code class="descclassname">neet.synchronous.</code><code class="descname">Landscape</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em>, <em>index=None</em>, <em>pin=None</em>, <em>values=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#Landscape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.Landscape" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">Landscape</span></code> class represents the structure and topology of the
+“landscape” of state transitions. That is, it is the state space
+together with information about state transitions and the topology of
+the state transition graph.</p>
+<dl class="method">
+<dt id="neet.synchronous.Landscape.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>net</em>, <em>size=None</em>, <em>index=None</em>, <em>pin=None</em>, <em>values=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#Landscape.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.Landscape.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the landscape for a network.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">&lt;neet.synchronous.Landscape object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Landscape</span><span class="p">(</span><span class="n">ECA</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">&lt;neet.synchronous.Landscape object at 0x...&gt;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – the network</li>
+<li><strong>size</strong> – the size of the network (<code class="docutils literal notranslate"><span class="pre">None</span></code> if fixed sized)</li>
+<li><strong>index</strong> – the index to update (or None)</li>
+<li><strong>pin</strong> – the indices to pin during update (or None)</li>
+<li><strong>values</strong> – a dictionary of index-value pairs to set after update</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>TypeError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not a network</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is not
+<code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">net</span></code> is not fixed sized and <code class="docutils literal notranslate"><span class="pre">size</span></code> is
+<code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.network">
+<code class="descname">network</code><a class="headerlink" href="#neet.synchronous.Landscape.network" title="Permalink to this definition">¶</a></dt>
+<dd><p>The landscape’s dynamical network</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">network</span>
+<span class="go">&lt;neet.boolean.wtnetwork.WTNetwork object at 0x...&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.size">
+<code class="descname">size</code><a class="headerlink" href="#neet.synchronous.Landscape.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of nodes in the landscape’s dynamical network</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">size</span>
+<span class="go">9</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.transitions">
+<code class="descname">transitions</code><a class="headerlink" href="#neet.synchronous.Landscape.transitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>The state transitions array</p>
+<p>The transitions array is an array, indexed by states, whose
+values are the subsequent state of the indexing state.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">transitions</span>
+<span class="go">array([  2,   2, 130, 130,   4,   0, 128, 128,   8,   0, 128, 128,  12,</span>
+<span class="go">         0, 128, 128, 256, 256, 384, 384, 260, 256, 384, 384, 264, 256,</span>
+<span class="go">       ...</span>
+<span class="go">       208, 208, 336, 336, 464, 464, 340, 336, 464, 464, 344, 336, 464,</span>
+<span class="go">       464, 348, 336, 464, 464])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.attractors">
+<code class="descname">attractors</code><a class="headerlink" href="#neet.synchronous.Landscape.attractors" title="Permalink to this definition">¶</a></dt>
+<dd><p>The array of attractor cycles.</p>
+<p>Each element of the array is an array of states in an attractor
+cycle.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">attractors</span>
+<span class="go">array([array([76]), array([4]), array([8]), array([12]),</span>
+<span class="go">       array([144, 110, 384]), array([68]), array([72]), array([132]),</span>
+<span class="go">       array([136]), array([140]), array([196]), array([200]),</span>
+<span class="go">       array([204])], dtype=object)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.attractor_lengths">
+<code class="descname">attractor_lengths</code><a class="headerlink" href="#neet.synchronous.Landscape.attractor_lengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>The length of each attractor cycle as an array, indexed by the
+attractor.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">attractor_lengths</span>
+<span class="go">array([1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.basins">
+<code class="descname">basins</code><a class="headerlink" href="#neet.synchronous.Landscape.basins" title="Permalink to this definition">¶</a></dt>
+<dd><p>The array of basin numbers, indexed by states.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">basins</span>
+<span class="go">array([ 0,  0,  0,  0,  1,  0,  0,  0,  2,  0,  0,  0,  3,  0,  0,  0,  0,</span>
+<span class="go">        0,  4,  4,  0,  0,  4,  4,  0,  0,  4,  4,  0,  0,  4,  4,  4,  4,</span>
+<span class="go">        ...</span>
+<span class="go">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span>
+<span class="go">        0,  0])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.basin_sizes">
+<code class="descname">basin_sizes</code><a class="headerlink" href="#neet.synchronous.Landscape.basin_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The basin sizes as an array indexed by the basin number.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">basin_sizes</span>
+<span class="go">array([378,   2,   2,   2, 104,   6,   6,   2,   2,   2,   2,   2,   2])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.in_degrees">
+<code class="descname">in_degrees</code><a class="headerlink" href="#neet.synchronous.Landscape.in_degrees" title="Permalink to this definition">¶</a></dt>
+<dd><p>The in-degree of each state as an array.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">in_degrees</span>
+<span class="go">array([ 6,  0,  4,  0,  2,  0,  0,  0,  2,  0,  0,  0,  2,  0,  0,  0, 12,</span>
+<span class="go">        0,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span>
+<span class="go">        ...</span>
+<span class="go">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span>
+<span class="go">        0,  0])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.heights">
+<code class="descname">heights</code><a class="headerlink" href="#neet.synchronous.Landscape.heights" title="Permalink to this definition">¶</a></dt>
+<dd><p>The height of each state as an array.</p>
+<p>The <em>height</em> of a state is the number of time steps from that
+state to a state in it’s attractor cycle.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">heights</span>
+<span class="go">array([7, 7, 6, 6, 0, 8, 6, 6, 0, 8, 6, 6, 0, 8, 6, 6, 8, 8, 1, 1, 2, 8,</span>
+<span class="go">       1, 1, 2, 8, 1, 1, 2, 8, 1, 1, 2, 2, 2, 2, 9, 9, 1, 1, 9, 9, 1, 1,</span>
+<span class="go">       ...</span>
+<span class="go">       3, 9, 9, 9, 3, 9, 9, 9, 3, 9, 9, 9, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,</span>
+<span class="go">       3, 3, 3, 3, 3, 3])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="neet.synchronous.Landscape.recurrence_times">
+<code class="descname">recurrence_times</code><a class="headerlink" href="#neet.synchronous.Landscape.recurrence_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>The recurrence time of each state as an array.</p>
+<p>The <em>recurrence time</em> is the number of time steps from that
+state until a state is repeated.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">recurrence_times</span>
+<span class="go">array([7, 7, 6, 6, 0, 8, 6, 6, 0, 8, 6, 6, 0, 8, 6, 6, 8, 8, 3, 3, 2, 8,</span>
+<span class="go">       3, 3, 2, 8, 3, 3, 2, 8, 3, 3, 4, 4, 4, 4, 9, 9, 3, 3, 9, 9, 3, 3,</span>
+<span class="go">       ...</span>
+<span class="go">       3, 9, 9, 9, 3, 9, 9, 9, 3, 9, 9, 9, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,</span>
+<span class="go">       3, 3, 3, 3, 3, 3])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.synchronous.Landscape.trajectory">
+<code class="descname">trajectory</code><span class="sig-paren">(</span><em>init</em>, <em>timesteps=None</em>, <em>encode=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#Landscape.trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.Landscape.trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the trajectory of a state.</p>
+<p>This method computes a trajectory from <code class="docutils literal notranslate"><span class="pre">init</span></code> to the last
+before the trajectory begins to repeat. If <code class="docutils literal notranslate"><span class="pre">timesteps</span></code> is
+provided, then the trajectory will have a length of <code class="docutils literal notranslate"><span class="pre">timesteps</span>
+<span class="pre">+</span> <span class="pre">1</span></code> regardless of repeated states. The <code class="docutils literal notranslate"><span class="pre">encode</span></code> argument
+forces the states in the trajectory to be either encoded or not.
+When <code class="docutils literal notranslate"><span class="pre">encode</span> <span class="pre">is</span> <span class="pre">None</span></code>, whether or not the states of the
+trajectory are encoded is determined by whether or not the
+initial state (<code class="docutils literal notranslate"><span class="pre">init</span></code>) is provided in encoded form.</p>
+<p>Note that when <code class="docutils literal notranslate"><span class="pre">timesteps</span> <span class="pre">is</span> <span class="pre">None</span></code>, the length of the
+resulting trajectory should be one greater than the recurrence
+time of the state.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">trajectory</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">[[1, 0, 0, 1, 0, 1, 1, 0, 1], ... [0, 0, 1, 1, 0, 0, 1, 0, 0]]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">trajectory</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">encode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">[361, 80, 320, 78, 128, 162, 178, 400, 332, 76]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">trajectory</span><span class="p">(</span><span class="mi">361</span><span class="p">)</span>
+<span class="go">[361, 80, 320, 78, 128, 162, 178, 400, 332, 76]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">trajectory</span><span class="p">(</span><span class="mi">361</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">[[1, 0, 0, 1, 0, 1, 1, 0, 1], ... [0, 0, 1, 1, 0, 0, 1, 0, 0]]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">trajectory</span><span class="p">(</span><span class="mi">361</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">[361, 80, 320, 78, 128, 162]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">trajectory</span><span class="p">(</span><span class="mi">361</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">[361, 80, 320, 78, 128, 162, 178, 400, 332, 76, 76]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>init</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code> or an iterable) – the initial state</li>
+<li><strong>timesteps</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code>) – the number of time steps to include in the trajectory</li>
+<li><strong>encode</strong> (<code class="docutils literal notranslate"><span class="pre">bool</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code>) – whether to encode the states in the trajectory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a list whose elements are subsequent states of the trajectory</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">init</span></code> an empty array</li>
+<li><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">timesteps</span></code> is less than <span class="math notranslate nohighlight">\(1\)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.synchronous.Landscape.timeseries">
+<code class="descname">timeseries</code><span class="sig-paren">(</span><em>timesteps</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#Landscape.timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.Landscape.timeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the full time series of the landscape.</p>
+<p>This method computes a 3-dimensional array elements are the
+states of each node in the network. The dimensions of the array
+are indexed by, in order, the node, the initial state and the
+time step.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([[[0, 0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 0, 0, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0, 0, 0],</span>
+<span class="go">        ...,</span>
+<span class="go">        [1, 0, 0, 0, 0, 0],</span>
+<span class="go">        [0, 0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 0, 0, 0, 0, 0]],</span>
+
+<span class="go">       [[0, 1, 1, 1, 1, 0],</span>
+<span class="go">        [0, 1, 1, 1, 1, 0],</span>
+<span class="go">        [1, 1, 1, 1, 0, 0],</span>
+<span class="go">        ...,</span>
+<span class="go">        [0, 0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 0, 0, 0, 0, 0]],</span>
+
+<span class="go">       ...</span>
+
+<span class="go">       [[0, 0, 1, 1, 1, 1],</span>
+<span class="go">        [0, 0, 1, 1, 1, 1],</span>
+<span class="go">        [0, 1, 1, 1, 1, 0],</span>
+<span class="go">        ...,</span>
+<span class="go">        [1, 0, 0, 0, 0, 0],</span>
+<span class="go">        [1, 1, 0, 0, 0, 0],</span>
+<span class="go">        [1, 1, 0, 0, 0, 0]],</span>
+
+<span class="go">       [[0, 0, 0, 0, 0, 1],</span>
+<span class="go">        [0, 0, 0, 0, 0, 1],</span>
+<span class="go">        [0, 0, 0, 0, 1, 1],</span>
+<span class="go">        ...,</span>
+<span class="go">        [1, 1, 1, 0, 0, 0],</span>
+<span class="go">        [1, 1, 1, 0, 0, 0],</span>
+<span class="go">        [1, 1, 1, 0, 0, 0]]])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timesteps</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) – the number of timesteps to evolve the system</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a 3-D array of node states</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>ValueError</strong> – if <code class="docutils literal notranslate"><span class="pre">timesteps</span></code> is less than <span class="math notranslate nohighlight">\(1\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.synchronous.Landscape.basin_entropy">
+<code class="descname">basin_entropy</code><span class="sig-paren">(</span><em>base=2.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/synchronous.html#Landscape.basin_entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.synchronous.Landscape.basin_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the basin entropy of the landscape <a class="reference internal" href="zrefs.html#krawitz2007" id="id2">[Krawitz2007]</a>.</p>
+<p>This method computes the Shannon entropy of the distribution of
+basin sizes. The base of the logarithm is chosen to be the
+number of basins so that the result is <span class="math notranslate nohighlight">\(0 \leq h \leq 1\)</span>.
+If there is fewer than <span class="math notranslate nohighlight">\(2\)</span> basins, then the base is taken
+to be <span class="math notranslate nohighlight">\(2\)</span> so that the result is never <cite>NaN</cite>. The base can
+be forcibly overridden with the <code class="docutils literal notranslate"><span class="pre">base</span></code> keyword argument.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span> <span class="o">=</span> <span class="n">Landscape</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">basin_entropy</span><span class="p">()</span>
+<span class="go">1.221888833884975</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">basin_entropy</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">1.221888833884975</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">basin_entropy</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">0.36782519036626105</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">landscape</span><span class="o">.</span><span class="n">basin_entropy</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+<span class="go">0.8469488001650497</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base</strong> (a number or <code class="docutils literal notranslate"><span class="pre">None</span></code>) – the base of the logarithm</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the basin entropy of the landscape of type <code class="docutils literal notranslate"><span class="pre">float</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sensitivity.html" class="btn btn-neutral float-right" title="Sensitivity" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="boolean.html" class="btn btn-neutral" title="Boolean Networks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

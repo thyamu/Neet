@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>neet.interfaces &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>neet.interfaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for neet.interfaces</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. currentmodule:: neet.interfaces</span>
+
+<span class="sd">.. testsetup:: interfaces</span>
+
+<span class="sd">    from neet.automata import ECA</span>
+<span class="sd">    from neet.interfaces import *</span>
+<span class="sd">    from neet.statespace import StateSpace</span>
+
+<span class="sd">Interfaces</span>
+<span class="sd">==========</span>
+
+<span class="sd">The :mod:`neet.interfaces` module provides a collection of functions for</span>
+<span class="sd">determining if types adhere to various network interfaces, and generic</span>
+<span class="sd">functions for operating upon them. This done primarily through the</span>
+<span class="sd">:func:`is_network`, :func:`is_fixed_sized` and :func:`is_boolean_network`</span>
+<span class="sd">functions.</span>
+
+<span class="sd">API Documentation</span>
+<span class="sd">-----------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="is_network"><a class="viewcode-back" href="../../interfaces.html#neet.interfaces.is_network">[docs]</a><span class="k">def</span> <span class="nf">is_network</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether an *object* or *type* meets the interface requirement of</span>
+<span class="sd">    a network. Specifically, to be considered a network, a class must provide</span>
+<span class="sd">    the following methods:</span>
+
+<span class="sd">    1. `update` which updates the state of a lattice</span>
+<span class="sd">    2. `state_space` which returns a :func:`neet.statespace.StateSpace` object</span>
+<span class="sd">    3. `neighbors` which returns the neighbors of a given node</span>
+
+<span class="sd">    .. rubric:: Example:</span>
+
+<span class="sd">    .. doctest:: interfaces</span>
+
+<span class="sd">        &gt;&gt;&gt; class IsNetwork(object):</span>
+<span class="sd">        ...     def update(self):</span>
+<span class="sd">        ...         pass</span>
+<span class="sd">        ...     def state_space(self):</span>
+<span class="sd">        ...         return StateSpace(1)</span>
+<span class="sd">        ...     def neighbors(self, i):</span>
+<span class="sd">        ...         return []</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; class IsNotNetwork(object):</span>
+<span class="sd">        ...     pass</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; is_network(IsNetwork())</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_network(IsNetwork)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_network(IsNotNetwork())</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_network(IsNotNetwork)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_network(5)</span>
+<span class="sd">        False</span>
+
+<span class="sd">    :param thing: an object or a type</span>
+<span class="sd">    :returns: ``True`` if ``thing`` has the minimum interface of a network</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">has_update</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="s1">&#39;update&#39;</span><span class="p">)</span>
+    <span class="n">has_state_space</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="s1">&#39;state_space&#39;</span><span class="p">)</span>
+    <span class="n">has_neighbors</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="s1">&#39;neighbors&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">has_update</span> <span class="ow">and</span> <span class="n">has_state_space</span> <span class="ow">and</span> <span class="n">has_neighbors</span></div>
+
+
+<div class="viewcode-block" id="is_fixed_sized"><a class="viewcode-back" href="../../interfaces.html#neet.interfaces.is_fixed_sized">[docs]</a><span class="k">def</span> <span class="nf">is_fixed_sized</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether an *object* or *type* is a network and has a fixed size.</span>
+
+<span class="sd">    .. rubric:: Example</span>
+
+<span class="sd">    .. doctest:: interfaces</span>
+
+<span class="sd">        &gt;&gt;&gt; class IsNetwork(object):</span>
+<span class="sd">        ...     def update(self):</span>
+<span class="sd">        ...         pass</span>
+<span class="sd">        ...     def state_space(self):</span>
+<span class="sd">        ...         return StateSpace(1)</span>
+<span class="sd">        ...     def neighbors(self, i):</span>
+<span class="sd">        ...         return []</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; class FixedSized(IsNetwork):</span>
+<span class="sd">        ...     def size():</span>
+<span class="sd">        ...         return 5</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; is_fixed_sized(IsNetwork)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; is_fixed_sized(FixedSized)</span>
+<span class="sd">        True</span>
+
+<span class="sd">    :param thing: an object or a type</span>
+<span class="sd">    :returns: ``True`` if ``thing`` is a network with a size attribute</span>
+<span class="sd">    :see: :func:`is_network`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">is_network</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_boolean_network"><a class="viewcode-back" href="../../interfaces.html#neet.interfaces.is_boolean_network">[docs]</a><span class="k">def</span> <span class="nf">is_boolean_network</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether an *object* is a network with all Boolean states.d</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Boolean networks have a single base equal to 2</span>
+    <span class="k">if</span> <span class="n">is_network</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">state_space</span><span class="p">(),</span> <span class="s1">&#39;base&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">thing</span><span class="o">.</span><span class="n">state_space</span><span class="p">()</span><span class="o">.</span><span class="n">base</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="neighbors"><a class="viewcode-back" href="../../interfaces.html#neet.interfaces.neighbors">[docs]</a><span class="k">def</span> <span class="nf">neighbors</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a set of neighbors for a specified node, or a list of sets of</span>
+<span class="sd">    neighbors for all nodes in the network.</span>
+
+<span class="sd">    For ECAs, in the cases of the lattices having fixed boundary conditions,</span>
+<span class="sd">    the left boundary, being on the left of the leftmost index 0, has an index</span>
+<span class="sd">    of -1, while the right boundary&#39;s index is the size+1. The full state of</span>
+<span class="sd">    the lattices and the boundaries is equavolent to: `[cell0, cell1, ...,</span>
+<span class="sd">    cellN, right_boundary, left_boundary]` if it is ever presented as a single</span>
+<span class="sd">    list in Python.</span>
+
+<span class="sd">    :param index: node index, if neighbors desired for one node only</span>
+<span class="sd">    :param direction: type of node neighbors to return (&#39;in&#39;, &#39;out&#39;, or &#39;both&#39;)</span>
+<span class="sd">    :kwarg size: size of ECA, required if network is an ECA</span>
+<span class="sd">    :returns: a set of neighbors of a node</span>
+
+<span class="sd">    .. rubric:: Example</span>
+
+<span class="sd">    .. doctest:: interfaces</span>
+
+<span class="sd">        &gt;&gt;&gt; net = ECA(30)</span>
+<span class="sd">        &gt;&gt;&gt; neighbors(net, index=2, size=3, direction=&#39;out&#39;)</span>
+<span class="sd">        {0, 1, 2}</span>
+<span class="sd">        &gt;&gt;&gt; net.boundary = (1,1)</span>
+<span class="sd">        &gt;&gt;&gt; neighbors(net, index=2, size=3, direction=&#39;out&#39;)</span>
+<span class="sd">        {1, 2}</span>
+
+<span class="sd">    See `ECA.neighbors()`,`LogicNetwork.neighbors()` or `WTNetwork.neighbors()`</span>
+<span class="sd">    docstrings for more details and basic use examples.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;direction must be &quot;in&quot;, &quot;out&quot; or &quot;both&quot;&#39;</span><span class="p">)</span>
+
+    <span class="n">neighbor_types</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">neighbors_in</span><span class="p">,</span>
+                      <span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">neighbors_out</span><span class="p">,</span>
+                      <span class="s1">&#39;both&#39;</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">neighbors</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">net</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;ECA&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;size&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;A `size` kwarg is required for returning an ECA&#39;s neighbors&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">neighbor_types</span><span class="p">[</span><span class="n">direction</span><span class="p">](</span><span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">neighbor_types</span><span class="p">[</span><span class="n">direction</span><span class="p">](</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_networkx_graph"><a class="viewcode-back" href="../../interfaces.html#neet.interfaces.to_networkx_graph">[docs]</a><span class="k">def</span> <span class="nf">to_networkx_graph</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="s1">&#39;indices&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return networkx graph given neet network. Requires `networkx`.</span>
+
+<span class="sd">    :param labels: how node is labeled and thus identified in networkx graph</span>
+<span class="sd">                   (&#39;names&#39; or &#39;indices&#39;), only used if `net` is a</span>
+<span class="sd">                   `LogicNetwork` or `WTNetwork`</span>
+<span class="sd">    :kwarg size: size of ECA, required if network is an ECA</span>
+<span class="sd">    :returns: a networkx DiGraph</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">net</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;ECA&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;`size` required to convert an ECA to a networkx network&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">net</span><span class="o">.</span><span class="n">to_networkx_graph</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">net</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;WTNetwork&#39;</span><span class="p">,</span> <span class="s1">&#39;LogicNetwork&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">net</span><span class="o">.</span><span class="n">to_networkx_graph</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

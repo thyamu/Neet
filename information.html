@@ -1,0 +1,740 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Information Architecture &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Exceptions" href="exceptions.html" />
+    <link rel="prev" title="Sensitivity" href="sensitivity.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Information Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#information-measures">Information Measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#architecture-class">Architecture Class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Information Architecture</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/information.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-neet.information"></span><div class="section" id="information-architecture">
+<h1>Information Architecture<a class="headerlink" href="#information-architecture" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-neet.information" title="neet.information: Information measures on networks"><code class="xref py py-mod docutils literal notranslate"><span class="pre">neet.information</span></code></a> provides a collection of functions which compute
+various information measures over the dynamics of discrete-state network
+models. Each measure computes a time series of a desired length from each
+initial state of the network and uses the time series to populate probability
+distributions over the state transitions of each node. From there any number
+of information or entropy measures may be applied. All of this is bookkeeping
+is taken care of by the function; all you have to do is provide a network and
+any necessary parameters for the calculation</p>
+<p class="rubric">Example (Active Information for Fission Yeast)</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">active_information</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="go">       0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+</pre></div>
+</div>
+<p>The core information-theoretic computations are supported by the <a class="reference external" href="https://elife-asu.github.io/PyInform">PyInform</a> package.</p>
+<div class="section" id="api-documentation">
+<h2>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#module-neet.information" title="neet.information: Information measures on networks"><code class="xref py py-mod docutils literal notranslate"><span class="pre">neet.information</span></code></a> module is broken into two parts: <a class="reference internal" href="#information-measures">Information
+Measures</a> and the <a class="reference internal" href="#architecture-class">Architecture Class</a>.</p>
+<p>The <a class="reference internal" href="#information-measures">Information Measures</a> are a collection of module-level functions which
+independently compute a variety of information measures over a network of
+interest:</p>
+<ul class="simple">
+<li>Active Information Storage (<a class="reference internal" href="#neet.information.active_information" title="neet.information.active_information"><code class="xref py py-func docutils literal notranslate"><span class="pre">active_information()</span></code></a>)</li>
+<li>Entropy Rate (<a class="reference internal" href="#neet.information.entropy_rate" title="neet.information.entropy_rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">entropy_rate()</span></code></a>)</li>
+<li>Transfer Entropy (<a class="reference internal" href="#neet.information.transfer_entropy" title="neet.information.transfer_entropy"><code class="xref py py-func docutils literal notranslate"><span class="pre">transfer_entropy()</span></code></a>)</li>
+<li>Mutual Information (<a class="reference internal" href="#neet.information.mutual_information" title="neet.information.mutual_information"><code class="xref py py-func docutils literal notranslate"><span class="pre">mutual_information()</span></code></a>).</li>
+</ul>
+<p>However, since they do not share any data between them, if you plan to compute
+many different measures, it is much more efficient to cache the computed time
+series. This is done by the <a class="reference internal" href="#neet.information.Architecture" title="neet.information.Architecture"><code class="xref py py-class docutils literal notranslate"><span class="pre">Architecture</span></code></a> class which provides all of
+the same measures, only computes the time series once.</p>
+<div class="section" id="information-measures">
+<h3>Information Measures<a class="headerlink" href="#information-measures" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.information.active_information">
+<code class="descclassname">neet.information.</code><code class="descname">active_information</code><span class="sig-paren">(</span><em>net</em>, <em>k</em>, <em>timesteps</em>, <em>size=None</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#active_information"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.active_information" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the active information storage for each node in a network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">active_information</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="go">       0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lais</span> <span class="o">=</span> <span class="n">active_information</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lais</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">array([[0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       ...,</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lais</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">0.4083435963963132</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – a NEET network</li>
+<li><strong>k</strong> – the history length</li>
+<li><strong>timesteps</strong> – the number of timesteps to evaluate the network</li>
+<li><strong>size</strong> – the size of variable-sized network (or <code class="docutils literal notranslate"><span class="pre">None</span></code>)</li>
+<li><strong>local</strong> – whether or not to compute the local active information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a numpy array of active information values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.information.entropy_rate">
+<code class="descclassname">neet.information.</code><code class="descname">entropy_rate</code><span class="sig-paren">(</span><em>net</em>, <em>k</em>, <em>timesteps</em>, <em>size=None</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#entropy_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.entropy_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the entropy rate for each node in a network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entropy_rate</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">array([0.        , 0.01691208, 0.07280268, 0.07280268, 0.05841994,</span>
+<span class="go">       0.02479402, 0.03217332, 0.03217332, 0.08966941])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ler</span> <span class="o">=</span> <span class="n">entropy_rate</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ler</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="go">array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       ...,</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ler</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">0.0584199434476326</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – a NEET network</li>
+<li><strong>k</strong> – the history length</li>
+<li><strong>timesteps</strong> – the number of timesteps to evaluate the network</li>
+<li><strong>size</strong> – the size of variable-sized network (or <code class="docutils literal notranslate"><span class="pre">None</span></code>)</li>
+<li><strong>local</strong> – whether or not to compute the local entropy rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a numpy array of entropy rate values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.information.transfer_entropy">
+<code class="descclassname">neet.information.</code><code class="descname">transfer_entropy</code><span class="sig-paren">(</span><em>net</em>, <em>k</em>, <em>timesteps</em>, <em>size=None</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#transfer_entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.transfer_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the transfer entropy matrix for a network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">transfer_entropy</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">array([[ 0.00000000e+00,  0.00000000e+00, -1.11022302e-16,</span>
+<span class="go">        -1.11022302e-16,  0.00000000e+00,  0.00000000e+00,</span>
+<span class="go">        -1.11022302e-16,  0.00000000e+00,  0.00000000e+00],</span>
+<span class="go">       [-4.44089210e-16, -4.44089210e-16, -4.44089210e-16,</span>
+<span class="go">        -4.44089210e-16,  1.69120759e-02, -4.44089210e-16,</span>
+<span class="go">        -4.44089210e-16, -4.44089210e-16, -4.44089210e-16],</span>
+<span class="go">       [ 4.44089210e-16,  5.13704599e-02,  4.44089210e-16,</span>
+<span class="go">         1.22248438e-02,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="go">         6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="go">       [ 4.44089210e-16,  5.13704599e-02,  1.22248438e-02,</span>
+<span class="go">         4.44089210e-16,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="go">         6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="go">       [ 0.00000000e+00,  5.84199434e-02,  4.76020591e-02,</span>
+<span class="go">         4.76020591e-02,  0.00000000e+00,  5.84199434e-02,</span>
+<span class="go">         4.76020591e-02,  4.76020591e-02,  0.00000000e+00],</span>
+<span class="go">       [ 2.22044605e-16,  2.22044605e-16,  2.47940243e-02,</span>
+<span class="go">         2.47940243e-02,  2.22044605e-16,  2.22044605e-16,</span>
+<span class="go">         2.47940243e-02,  2.47940243e-02,  2.22044605e-16],</span>
+<span class="go">       [-4.44089210e-16,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="go">         4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="go">        -4.44089210e-16,  2.98276692e-03,  3.21733224e-02],</span>
+<span class="go">       [-4.44089210e-16,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="go">         4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="go">         2.98276692e-03, -4.44089210e-16,  3.21733224e-02],</span>
+<span class="go">       [-4.44089210e-16,  6.03036989e-02,  4.82889077e-02,</span>
+<span class="go">         4.82889077e-02,  8.96694146e-02,  6.03036989e-02,</span>
+<span class="go">         4.89270931e-02,  4.89270931e-02, -4.44089210e-16]])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lte</span> <span class="o">=</span> <span class="n">transfer_entropy</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lte</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       ...,</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lte</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">0.047602059103704124</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – a NEET network</li>
+<li><strong>k</strong> – the history length</li>
+<li><strong>timesteps</strong> – the number of timesteps to evaluate the network</li>
+<li><strong>size</strong> – the size of variable-sized network (or <code class="docutils literal notranslate"><span class="pre">None</span></code>)</li>
+<li><strong>local</strong> – whether or not to compute the local transfer entropy</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a numpy matrix of transfer entropy values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.information.mutual_information">
+<code class="descclassname">neet.information.</code><code class="descname">mutual_information</code><span class="sig-paren">(</span><em>net</em>, <em>timesteps</em>, <em>size=None</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#mutual_information"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.mutual_information" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mutual information matrix for a network.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mutual_information</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="go">array([[0.16232618, 0.01374672, 0.00428548, 0.00428548, 0.01340937,</span>
+<span class="go">        0.01586238, 0.00516987, 0.00516987, 0.01102766],</span>
+<span class="go">       [0.01374672, 0.56660996, 0.00745714, 0.00745714, 0.00639113,</span>
+<span class="go">        0.32790848, 0.0067609 , 0.0067609 , 0.00468342],</span>
+<span class="go">       [0.00428548, 0.00745714, 0.83837294, 0.475582  , 0.21157695,</span>
+<span class="go">        0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="go">       [0.00428548, 0.00745714, 0.475582  , 0.83837294, 0.21157695,</span>
+<span class="go">        0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="go">       [0.01340937, 0.00639113, 0.21157695, 0.21157695, 0.57459066,</span>
+<span class="go">        0.00703145, 0.17560769, 0.17560769, 0.01233356],</span>
+<span class="go">       [0.01586238, 0.32790848, 0.00432855, 0.00432855, 0.00703145,</span>
+<span class="go">        0.51905053, 0.00621124, 0.00621124, 0.00260667],</span>
+<span class="go">       [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="go">        0.00621124, 0.80831657, 0.49349527, 0.10390475],</span>
+<span class="go">       [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="go">        0.00621124, 0.49349527, 0.80831657, 0.10390475],</span>
+<span class="go">       [0.01102766, 0.00468342, 0.12755745, 0.12755745, 0.01233356,</span>
+<span class="go">        0.00260667, 0.10390475, 0.10390475, 0.63423835]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lmi</span> <span class="o">=</span> <span class="n">mutual_information</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lmi</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">array([[-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       ...,</span>
+<span class="go">       [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lmi</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">0.21157695279993294</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – a NEET network</li>
+<li><strong>k</strong> – the history length</li>
+<li><strong>timesteps</strong> – the number of timesteps to evaluate the network</li>
+<li><strong>size</strong> – the size of variable-sized network (or <code class="docutils literal notranslate"><span class="pre">None</span></code>)</li>
+<li><strong>local</strong> – whether or not to compute the local mutual information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a numpy matrix of mutual information values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="architecture-class">
+<h3>Architecture Class<a class="headerlink" href="#architecture-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="neet.information.Architecture">
+<em class="property">class </em><code class="descclassname">neet.information.</code><code class="descname">Architecture</code><span class="sig-paren">(</span><em>net</em>, <em>k</em>, <em>timesteps</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#Architecture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.Architecture" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to represent the k-history informational architecture of a network.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The class:<cite>Architecture</cite> computes the average information measures a
+bit differently than the associated module-level functions.
+Specifically, it first computes the local measures and then averages
+them; this leads different numerical results on account of the subtlties
+of floating-point mathematics. However, they will always be “close”. In
+particular</p>
+<div class="last highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span> <span class="o">=</span> <span class="n">Architecture</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">function</span> <span class="o">=</span> <span class="n">transfer_entropy</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">method</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">transfer_entropy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">function</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<dl class="method">
+<dt id="neet.information.Architecture.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>net</em>, <em>k</em>, <em>timesteps</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#Architecture.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.Architecture.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the architecture given a network and enough information to
+compute a time series.</p>
+<p>During initialization the following measures are computed and cached:
+* Local and Average Active Information Storage
+* Local and Average Entropy Rate
+* Local and Average Transfer Entropy
+* Local and Average Mutual Information</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span> <span class="o">=</span> <span class="n">Architecture</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span><span class="o">.</span><span class="n">active_information</span><span class="p">()</span>
+<span class="go">array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="go">       0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>net</strong> – a NEET network</li>
+<li><strong>k</strong> – the history length</li>
+<li><strong>timesteps</strong> – the number of timesteps to evaluate the network</li>
+<li><strong>size</strong> – the size of variable-sized network (or <code class="docutils literal notranslate"><span class="pre">None</span></code>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.information.Architecture.active_information">
+<code class="descname">active_information</code><span class="sig-paren">(</span><em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#Architecture.active_information"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.Architecture.active_information" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the local or average active information</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span> <span class="o">=</span> <span class="n">Architecture</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span><span class="o">.</span><span class="n">active_information</span><span class="p">()</span>
+<span class="go">array([0.        , 0.4083436 , 0.62956679, 0.62956679, 0.37915718,</span>
+<span class="go">       0.40046165, 0.67019615, 0.67019615, 0.39189127])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lais</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">active_information</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lais</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">array([[0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       ...,</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175],</span>
+<span class="go">       [0.13079175, 0.13079175, 0.13079175, ..., 0.13079175, 0.13079175,</span>
+<span class="go">        0.13079175]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lais</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">0.4083435963963132</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>local</strong> (<em>bool</em>) – whether to return local (True) or global active information</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a numpy array containing the (local) active information</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.information.Architecture.entropy_rate">
+<code class="descname">entropy_rate</code><span class="sig-paren">(</span><em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#Architecture.entropy_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.Architecture.entropy_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the local or average entropy rate</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span> <span class="o">=</span> <span class="n">Architecture</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span><span class="o">.</span><span class="n">entropy_rate</span><span class="p">()</span>
+<span class="go">array([0.        , 0.01691208, 0.07280268, 0.07280268, 0.05841994,</span>
+<span class="go">       0.02479402, 0.03217332, 0.03217332, 0.08966941])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ler</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">entropy_rate</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ler</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="go">array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       ...,</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099]])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>local</strong> (<em>bool</em>) – whether to return local (True) or global entropy rate</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a numpy array containing the (local) entropy rate</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.information.Architecture.mutual_information">
+<code class="descname">mutual_information</code><span class="sig-paren">(</span><em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#Architecture.mutual_information"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.Architecture.mutual_information" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the local or average mutual information</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span> <span class="o">=</span> <span class="n">Architecture</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span><span class="o">.</span><span class="n">mutual_information</span><span class="p">()</span>
+<span class="go">array([[0.16232618, 0.01374672, 0.00428548, 0.00428548, 0.01340937,</span>
+<span class="go">        0.01586238, 0.00516987, 0.00516987, 0.01102766],</span>
+<span class="go">       [0.01374672, 0.56660996, 0.00745714, 0.00745714, 0.00639113,</span>
+<span class="go">        0.32790848, 0.0067609 , 0.0067609 , 0.00468342],</span>
+<span class="go">       [0.00428548, 0.00745714, 0.83837294, 0.475582  , 0.21157695,</span>
+<span class="go">        0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="go">       [0.00428548, 0.00745714, 0.475582  , 0.83837294, 0.21157695,</span>
+<span class="go">        0.00432855, 0.4590254 , 0.4590254 , 0.12755745],</span>
+<span class="go">       [0.01340937, 0.00639113, 0.21157695, 0.21157695, 0.57459066,</span>
+<span class="go">        0.00703145, 0.17560769, 0.17560769, 0.01233356],</span>
+<span class="go">       [0.01586238, 0.32790848, 0.00432855, 0.00432855, 0.00703145,</span>
+<span class="go">        0.51905053, 0.00621124, 0.00621124, 0.00260667],</span>
+<span class="go">       [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="go">        0.00621124, 0.80831657, 0.49349527, 0.10390475],</span>
+<span class="go">       [0.00516987, 0.0067609 , 0.4590254 , 0.4590254 , 0.17560769,</span>
+<span class="go">        0.00621124, 0.49349527, 0.80831657, 0.10390475],</span>
+<span class="go">       [0.01102766, 0.00468342, 0.12755745, 0.12755745, 0.01233356,</span>
+<span class="go">        0.00260667, 0.10390475, 0.10390475, 0.63423835]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lmi</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">mutual_information</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lmi</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">array([[-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-0.67489772, -0.67489772, -0.67489772, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       ...,</span>
+<span class="go">       [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073],</span>
+<span class="go">       [-2.89794147,  1.7513014 ,  0.18484073, ...,  0.18484073,</span>
+<span class="go">         0.18484073,  0.18484073]])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>local</strong> (<em>bool</em>) – whether to return local (True) or global mutual information</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a numpy array containing the (local) mutual information</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="neet.information.Architecture.transfer_entropy">
+<code class="descname">transfer_entropy</code><span class="sig-paren">(</span><em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/information.html#Architecture.transfer_entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.information.Architecture.transfer_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the local or average transfer entropy</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span> <span class="o">=</span> <span class="n">Architecture</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arch</span><span class="o">.</span><span class="n">transfer_entropy</span><span class="p">()</span>
+<span class="go">array([[ 0.00000000e+00,  3.37457926e-18, -2.18195687e-18,</span>
+<span class="go">        -2.18195687e-18, -5.39390581e-18,  3.37457926e-18,</span>
+<span class="go">         5.10930274e-18,  5.10930274e-18,  1.80248611e-18],</span>
+<span class="go">       [-3.25260652e-18, -3.25260652e-18, -3.05745013e-17,</span>
+<span class="go">        -3.05745013e-17,  1.69120759e-02, -3.25260652e-18,</span>
+<span class="go">        -3.25260652e-18, -3.25260652e-18, -3.25260652e-18],</span>
+<span class="go">       [-4.20670443e-17,  5.13704599e-02, -4.20670443e-17,</span>
+<span class="go">         1.22248438e-02,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="go">         6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="go">       [-4.20670443e-17,  5.13704599e-02,  1.22248438e-02,</span>
+<span class="go">        -4.20670443e-17,  1.99473023e-02,  5.13704599e-02,</span>
+<span class="go">         6.03879253e-03,  6.03879253e-03,  7.28026801e-02],</span>
+<span class="go">       [-1.09531524e-16,  5.84199434e-02,  4.76020591e-02,</span>
+<span class="go">         4.76020591e-02, -1.09531524e-16,  5.84199434e-02,</span>
+<span class="go">         4.76020591e-02,  4.76020591e-02, -1.09531524e-16],</span>
+<span class="go">       [-5.20417043e-18, -5.20417043e-18,  2.47940243e-02,</span>
+<span class="go">         2.47940243e-02, -5.20417043e-18, -5.20417043e-18,</span>
+<span class="go">         2.47940243e-02,  2.47940243e-02, -5.20417043e-18],</span>
+<span class="go">       [ 3.08997619e-17,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="go">         4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="go">         3.08997619e-17,  2.98276692e-03,  3.21733224e-02],</span>
+<span class="go">       [ 3.08997619e-17,  1.66898258e-02,  4.52634832e-03,</span>
+<span class="go">         4.52634832e-03,  1.19161772e-02,  1.66898258e-02,</span>
+<span class="go">         2.98276692e-03,  3.08997619e-17,  3.21733224e-02],</span>
+<span class="go">       [ 1.37693676e-17,  6.03036989e-02,  4.82889077e-02,</span>
+<span class="go">         4.82889077e-02,  8.96694146e-02,  6.03036989e-02,</span>
+<span class="go">         4.89270931e-02,  4.89270931e-02,  1.37693676e-17]])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lte</span> <span class="o">=</span> <span class="n">arch</span><span class="o">.</span><span class="n">transfer_entropy</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lte</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="go">array([[0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.        , 0.        , ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       ...,</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099],</span>
+<span class="go">       [0.        , 0.29604946, 0.00507099, ..., 0.00507099, 0.00507099,</span>
+<span class="go">        0.00507099]])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>local</strong> (<em>bool</em>) – whether to return local (True) or global transfer entropy</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a numpy array containing the (local) transfer entropy</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="exceptions.html" class="btn btn-neutral float-right" title="Exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="sensitivity.html" class="btn btn-neutral" title="Sensitivity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Neet: Simulating and analyzing network models &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="getting-started.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sensitivity.html">Sensitivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Neet: Simulating and analyzing network models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="neet-simulating-and-analyzing-network-models">
+<h1>Neet: Simulating and analyzing network models<a class="headerlink" href="#neet-simulating-and-analyzing-network-models" title="Permalink to this headline">¶</a></h1>
+<p><strong>Neet</strong> is a python package designed to provide an easy-to-use API for creating
+and evaluating network models. In its current state, <strong>Neet</strong> supports
+simulating synchronous Boolean network models, though the API is designed to be
+model generic. Future work will implement asynchronous update mechanisms and
+more general network types.</p>
+<p>If you are interested in using <strong>Neet</strong>, you’ll definitely be interested in
+checking out the documentation - <a class="reference external" href="https://elife-asu.github.io/Neet">https://elife-asu.github.io/Neet</a>.</p>
+<a class="reference external image-reference" href="https://travis-ci.org/ELIFE-ASU/Neet"><img alt="Build Status (Travis CI)" src="https://travis-ci.org/ELIFE-ASU/Neet.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://ci.appveyor.com/project/dglmoore/neet-awnxe/branch/master"><img alt="Build Status (Appveyor)" src="https://ci.appveyor.com/api/projects/status/eyrn6l2wygeglnx5/branch/master?svg=true" /></a>
+<div class="section" id="getting-help">
+<h2>Getting Help<a class="headerlink" href="#getting-help" title="Permalink to this headline">¶</a></h2>
+<p><strong>Neet</strong> is developed to help people interested in using and analyzing network
+models to get things done quickly and painlessly. Your feedback is
+indispensable. Please create an issue if you find a bug, an error in the
+documentation, or have a feature you’d like to request. Your contribution will
+make <strong>Neet</strong> a better tool for everyone.</p>
+<p>If you are interested in contributing to <strong>Neet</strong>, please contact the
+developers. We’ll get you up and running!</p>
+<dl class="docutils">
+<dt><strong>Neet Source Repository</strong></dt>
+<dd><a class="reference external" href="https://github.com/elife-asu/neet">https://github.com/elife-asu/neet</a></dd>
+<dt><strong>Neet Issue Tracker</strong></dt>
+<dd><a class="reference external" href="https://github.com/elife-asu/neet/issues">https://github.com/elife-asu/neet/issues</a></dd>
+</dl>
+</div>
+<div class="section" id="relevant-publications">
+<h2>Relevant Publications<a class="headerlink" href="#relevant-publications" title="Permalink to this headline">¶</a></h2>
+<p>Daniels, B.C., Kim, H., Moore, D.G., Zhou, S., Smith, H.B., Karas, B., Kauffman,
+S.A., and Walker, S.I. (2018) “Criticality Distinguishes the Ensemble of
+Biological Regulatory Networks” <em>Phys. Rev.  Lett.</em> <strong>121</strong> (13), 138102,
+<a class="reference external" href="https://doi.org/10.1103/PhysRevLett.121.138102">doi:10.1103/PhysRevLett.121.138102</a>.</p>
+</div>
+<div class="section" id="copyright-and-licensing">
+<h2>Copyright and Licensing<a class="headerlink" href="#copyright-and-licensing" title="Permalink to this headline">¶</a></h2>
+<p>Copyright © 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G.
+Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou. Free use of this software
+is granted under the terms of the MIT License.</p>
+<p>See the <a class="reference external" href="https://github.com/elife-asu/neet/blob/master/LICENSE">LICENSE</a> for
+details.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#via-pip">Via Pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#from-source">From Source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#system-support">System Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="statespace.html">State Space</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="statespace.html#api-documentation">API Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="interfaces.html#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#interface-testing">Interface Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interfaces.html#interface-functions">Interface Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#module-neet.automata.eca">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="automata.html#elementary-cellular-automata">Elementary Cellular Automata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="automata.html#rewired-elementary-cellular-automata">Rewired Elementary Cellular Automata</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="boolean.html">Boolean Networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="boolean.html#module-neet.boolean.wtnetwork">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="boolean.html#weight-threshold-networks">Weight/Threshold Networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolean.html#logic-based-networks">Logic-based Networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolean.html#network-type-conversion">Network Type Conversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolean.html#random-networks">Random networks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolean.html#example-networks">Example Networks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="synchronous.html">Synchronous Network Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="synchronous.html#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="synchronous.html#time-series-generation">Time Series Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="synchronous.html#synchronous-landscape-analysis-functions">Synchronous Landscape Analysis Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="synchronous.html#attractor-landscape">Attractor Landscape</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sensitivity.html">Sensitivity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sensitivity.html#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sensitivity.html#sensitivity-measures">Sensitivity Measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sensitivity.html#canalization-functions">Canalization Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sensitivity.html#utility-functions">Utility Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Information Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="information.html#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="information.html#information-measures">Information Measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="information.html#architecture-class">Architecture Class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html#api-documentation">API Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="getting-started.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,576 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sensitivity &mdash; Neet 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Information Architecture" href="information.html" />
+    <link rel="prev" title="Synchronous Network Analysis" href="synchronous.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Neet
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statespace.html">State Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfaces.html">Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Cellular Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean.html">Boolean Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synchronous.html">Synchronous Network Analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sensitivity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-documentation">API Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sensitivity-measures">Sensitivity Measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#canalization-functions">Canalization Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utility-functions">Utility Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="information.html">Information Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zrefs.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Neet</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Sensitivity</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/sensitivity.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-neet.sensitivity"></span><div class="section" id="sensitivity">
+<h1>Sensitivity<a class="headerlink" href="#sensitivity" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-neet.sensitivity" title="neet.sensitivity: Sensitivity measures and related functions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">neet.sensitivity</span></code></a> module provides a collection of functions for
+computing measures of sensitivity of networks, i.e. the degree to which
+perturbations of the network state propogate and spread. This module also
+provides a collection of functions for identifying “canalizing edges”: edges
+for which a state of the source node uniquely determines the state of the
+target regardless of other sources.</p>
+<div class="section" id="api-documentation">
+<h2>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sensitivity-measures">
+<h3>Sensitivity Measures<a class="headerlink" href="#sensitivity-measures" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.sensitivity.sensitivity">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">sensitivity</code><span class="sig-paren">(</span><em>net</em>, <em>state</em>, <em>transitions=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#sensitivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.sensitivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Boolean network sensitivity, as defined in <a class="reference internal" href="zrefs.html#shmulevich2004" id="id1">[Shmulevich2004]</a></p>
+<p>The sensitivity of a Boolean function <span class="math notranslate nohighlight">\(f\)</span> on state vector <span class="math notranslate nohighlight">\(x\)</span>
+is the number of Hamming neighbors of <span class="math notranslate nohighlight">\(x\)</span> on which the function
+value is different than on <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>This calculates the average sensitivity over all <span class="math notranslate nohighlight">\(N\)</span> boolean
+functions, where <span class="math notranslate nohighlight">\(N\)</span> is the size of net.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sensitivity</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sensitivity</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">0.4444444444444444</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sensitivity</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">1.75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sensitivity</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">1.25</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>net</strong> – <code class="xref py py-mod docutils literal notranslate"><span class="pre">neet</span></code> boolean network</li>
+<li><strong>state</strong> – a single network state, represented as a list of node states</li>
+<li><strong>transitions</strong> (<em>list</em><em> or </em><em>None</em>) – a list of precomputed state transitions (<em>optional</em>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.sensitivity.average_sensitivity">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">average_sensitivity</code><span class="sig-paren">(</span><em>net</em>, <em>states=None</em>, <em>weights=None</em>, <em>calc_trans=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#average_sensitivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.average_sensitivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate average Boolean network sensitivity, as defined in
+<a class="reference internal" href="zrefs.html#shmulevich2004" id="id2">[Shmulevich2004]</a>.</p>
+<p>The sensitivity of a Boolean function <span class="math notranslate nohighlight">\(f\)</span> on state vector <span class="math notranslate nohighlight">\(x\)</span>
+is the number of Hamming neighbors of <span class="math notranslate nohighlight">\(x\)</span> on which the function
+value is different than on <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>The average sensitivity is an average taken over initial states.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">average_sensitivity</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">)</span>
+<span class="go">1.265625</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">average_sensitivity</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">...</span>
+<span class="go">1.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">average_sensitivity</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span><span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="go">1.7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">average_sensitivity</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="go">1.7</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – NEET boolean network</li>
+<li><strong>states</strong> – Optional list or generator of states. If None, all states
+are used.</li>
+<li><strong>weights</strong> – Optional list or generator of weights for each state.
+If None, each state is equally weighted. If states and
+weights are both None, an algorithm is used to efficiently
+make use of sparse connectivity.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the average sensitivity of <code class="docutils literal notranslate"><span class="pre">net</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.sensitivity.lambdaQ">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">lambdaQ</code><span class="sig-paren">(</span><em>net</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#lambdaQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.lambdaQ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate sensitivity eigenvalue, the largest eigenvalue of the
+sensitivity matrix <a class="reference internal" href="#neet.sensitivity.average_difference_matrix" title="neet.sensitivity.average_difference_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">average_difference_matrix()</span></code></a>.</p>
+<p>This is analogous to the eigenvalue calculated in <a class="reference internal" href="zrefs.html#pomerance2009" id="id3">[Pomerance2009]</a>.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lambdaQ</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">0.8265021276831896</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambdaQ</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">)</span>
+<span class="go">1.263099227661824</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>net</strong> – a <code class="xref py py-mod docutils literal notranslate"><span class="pre">neet</span></code> boolean network</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the sensitivity eigenvalue (<span class="math notranslate nohighlight">\(\lambda_Q\)</span>) of <code class="docutils literal notranslate"><span class="pre">net</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="canalization-functions">
+<h3>Canalization Functions<a class="headerlink" href="#canalization-functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.sensitivity.is_canalizing">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">is_canalizing</code><span class="sig-paren">(</span><em>net</em>, <em>node_i</em>, <em>neighbor_j</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#is_canalizing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.is_canalizing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether a given network edge is canalizing: if <code class="docutils literal notranslate"><span class="pre">node_i</span></code>’s
+value at <span class="math notranslate nohighlight">\(t+1\)</span> is fully determined when <code class="docutils literal notranslate"><span class="pre">neighbor_j</span></code>’s value has
+a particular value at <span class="math notranslate nohighlight">\(t\)</span>, regardless of the values of other nodes,
+then there is a canalizing edge from <code class="docutils literal notranslate"><span class="pre">neighbor_j</span></code> to node_i.</p>
+<p>According to (Stauffer 1987), “A rule … is called forcing, or
+canalizing, if at least one of its <span class="math notranslate nohighlight">\(K\)</span> arguments has the property
+that the result of the function is already fixed if this argument has
+one particular value, regardless of the values for the <span class="math notranslate nohighlight">\(K-1\)</span> other
+arguments.”  Note that this is a definition for whether a node’s rule is
+canalizing, whereas this function calculates whether a specific edge is
+canalizing.  Under this definition, if a node has any incoming canalizing
+edges, then its rule is canalizing.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_canalizing</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_canalizing</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_canalizing</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_canalizing</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_canalizing</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – a <code class="xref py py-mod docutils literal notranslate"><span class="pre">neet</span></code> boolean network</li>
+<li><strong>node_i</strong> – target node index</li>
+<li><strong>neighbor_j</strong> – source node index</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">True</span></code> if the edge <code class="docutils literal notranslate"><span class="pre">(neighbor_j,</span> <span class="pre">node_i)</span></code> is canalizing, or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if the edge does not exist</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#neet.sensitivity.canalizing_edges" title="neet.sensitivity.canalizing_edges"><code class="xref py py-func docutils literal notranslate"><span class="pre">canalizing_edges()</span></code></a></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#neet.sensitivity.canalizing_nodes" title="neet.sensitivity.canalizing_nodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">canalizing_nodes()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.sensitivity.canalizing_edges">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">canalizing_edges</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#canalizing_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.canalizing_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a set of tuples corresponding to the edges in the network that
+are canalizing. Each tuple consists of two node indices, corresponding
+to an edge from the second node to the first node (so that the second node
+controls the first node in a canalizing manner).</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">canalizing_edges</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">{(1, 2), (5, 4), (0, 0), (1, 3), (4, 5), (5, 6), (5, 7), (1, 4), (8, 4), (5, 2), (5, 3)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">canalizing_edges</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">)</span>
+<span class="go">{(1, 2), (3, 2), (1, 3), (7, 6), (6, 0), (7, 7)}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>net</strong> – a <code class="xref py py-mod docutils literal notranslate"><span class="pre">neet</span></code> boolean network</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the set of canalizing edges as in the form <code class="docutils literal notranslate"><span class="pre">(target,</span> <span class="pre">source)</span></code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#neet.sensitivity.is_canalizing" title="neet.sensitivity.is_canalizing"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_canalizing()</span></code></a></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#neet.sensitivity.canalizing_nodes" title="neet.sensitivity.canalizing_nodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">canalizing_nodes()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.sensitivity.canalizing_nodes">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">canalizing_nodes</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#canalizing_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.canalizing_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the nodes of the network which have at least one incoming canalizing
+edge.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">canalizing_nodes</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">{0, 1, 4, 5, 8}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">canalizing_nodes</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">)</span>
+<span class="go">{1, 3, 6, 7}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>net</strong> – a <code class="xref py py-mod docutils literal notranslate"><span class="pre">neet</span></code> boolean network</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the set indices of nodes with at least one canalizing input edge</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#neet.sensitivity.is_canalizing" title="neet.sensitivity.is_canalizing"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_canalizing()</span></code></a></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#neet.sensitivity.canalizing_edges" title="neet.sensitivity.canalizing_edges"><code class="xref py py-func docutils literal notranslate"><span class="pre">canalizing_edges()</span></code></a></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="utility-functions">
+<h3>Utility Functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="neet.sensitivity.difference_matrix">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">difference_matrix</code><span class="sig-paren">(</span><em>net</em>, <em>state</em>, <em>transitions=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#difference_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.difference_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns matrix answering the question: Starting at the given state, does
+flipping the state of node <code class="docutils literal notranslate"><span class="pre">j</span></code> change the state of node <code class="docutils literal notranslate"><span class="pre">i</span></code>?</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">difference_matrix</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([[0., 0., 0., 0., 0., 0., 0., 0., 0.],</span>
+<span class="go">       [0., 0., 1., 1., 1., 0., 0., 0., 0.],</span>
+<span class="go">       [0., 0., 1., 0., 0., 0., 0., 0., 1.],</span>
+<span class="go">       [0., 0., 0., 1., 0., 0., 0., 0., 1.],</span>
+<span class="go">       [0., 0., 0., 0., 0., 1., 0., 0., 0.],</span>
+<span class="go">       [0., 0., 0., 0., 0., 0., 0., 1., 0.],</span>
+<span class="go">       [0., 0., 0., 0., 0., 0., 1., 0., 1.],</span>
+<span class="go">       [0., 1., 0., 0., 0., 0., 0., 1., 0.],</span>
+<span class="go">       [0., 0., 0., 0., 1., 0., 0., 0., 0.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_matrix</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([[1., 0., 0., 0., 0., 0., 0., 1.],</span>
+<span class="go">       [0., 0., 1., 1., 0., 0., 0., 0.],</span>
+<span class="go">       [0., 0., 1., 0., 1., 0., 0., 0.],</span>
+<span class="go">       [0., 0., 1., 0., 0., 0., 0., 0.],</span>
+<span class="go">       [0., 0., 0., 0., 1., 1., 0., 1.],</span>
+<span class="go">       [0., 0., 0., 0., 0., 1., 1., 0.],</span>
+<span class="go">       [1., 0., 0., 0., 0., 0., 0., 0.],</span>
+<span class="go">       [0., 0., 0., 0., 0., 0., 0., 1.]])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>net</strong> – a <code class="xref py py-mod docutils literal notranslate"><span class="pre">neet</span></code> boolean network</li>
+<li><strong>state</strong> – the starting state</li>
+<li><strong>transitions</strong> (<em>list</em><em> or </em><em>None</em>) – a precomputed list of state transitions (<em>optional</em>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="neet.sensitivity.average_difference_matrix">
+<code class="descclassname">neet.sensitivity.</code><code class="descname">average_difference_matrix</code><span class="sig-paren">(</span><em>net</em>, <em>states=None</em>, <em>weights=None</em>, <em>calc_trans=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neet/sensitivity.html#average_difference_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neet.sensitivity.average_difference_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Averaged over states, what is the probability
+that node i’s state is changed by a single bit flip of node j?</p>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">average_difference_matrix</span><span class="p">(</span><span class="n">s_pombe</span><span class="p">)</span>
+<span class="go">array([[0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    ,</span>
+<span class="go">        0.    ],</span>
+<span class="go">       [0.    , 0.    , 0.25  , 0.25  , 0.25  , 0.    , 0.    , 0.    ,</span>
+<span class="go">        0.    ],</span>
+<span class="go">       [0.25  , 0.25  , 0.25  , 0.    , 0.    , 0.25  , 0.    , 0.    ,</span>
+<span class="go">        0.25  ],</span>
+<span class="go">       [0.25  , 0.25  , 0.    , 0.25  , 0.    , 0.25  , 0.    , 0.    ,</span>
+<span class="go">        0.25  ],</span>
+<span class="go">       [0.    , 0.    , 0.    , 0.    , 0.    , 1.    , 0.    , 0.    ,</span>
+<span class="go">        0.    ],</span>
+<span class="go">       [0.    , 0.    , 0.0625, 0.0625, 0.0625, 0.    , 0.0625, 0.0625,</span>
+<span class="go">        0.    ],</span>
+<span class="go">       [0.    , 0.5   , 0.    , 0.    , 0.    , 0.    , 0.5   , 0.    ,</span>
+<span class="go">        0.5   ],</span>
+<span class="go">       [0.    , 0.5   , 0.    , 0.    , 0.    , 0.    , 0.    , 0.5   ,</span>
+<span class="go">        0.5   ],</span>
+<span class="go">       [0.    , 0.    , 0.    , 0.    , 1.    , 0.    , 0.    , 0.    ,</span>
+<span class="go">        0.    ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">average_difference_matrix</span><span class="p">(</span><span class="n">c_elegans</span><span class="p">)</span>
+<span class="go">array([[0.25  , 0.25  , 0.    , 0.    , 0.    , 0.25  , 0.25  , 0.25  ],</span>
+<span class="go">       [0.    , 0.    , 0.5   , 0.5   , 0.    , 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.5   , 0.    , 0.5   , 0.    , 0.5   , 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.    , 1.    , 0.    , 0.    , 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.3125, 0.3125, 0.3125, 0.3125, 0.3125, 0.    , 0.3125],</span>
+<span class="go">       [0.5   , 0.    , 0.    , 0.    , 0.    , 0.5   , 0.5   , 0.    ],</span>
+<span class="go">       [1.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.    , 0.    , 0.    , 0.    , 0.    , 0.5   , 0.5   ]])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>states</strong> (<em>list</em><em> or </em><em>None</em>) – If None, average over all possible states. Otherwise,
+providing a list of states will calculate the average over
+only those states.</li>
+<li><strong>calc_trans</strong> (<em>bool</em>) – Optionally pre-calculate all transitions. Only used
+when states or weights argument is not None.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">boolean <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="information.html" class="btn btn-neutral float-right" title="Information Architecture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="synchronous.html" class="btn btn-neutral" title="Synchronous Network Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017-2018 Bryan C. Daniels, Bradley Karas, Hyunju Kim, Douglas G. Moore, Harrison Smith, Sara I. Walker, and Siyu Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
